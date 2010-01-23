@@ -6,7 +6,7 @@ def mysql_connect(db_name='shintolin')
 
     $mysql = Mysql.real_connect('localhost', 
                                 'root', 
-                                '', 
+                                'cashew', 
                                 db_name, 
                                 80)
     # print 'Succesfully connected to MySQL.'

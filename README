@@ -8,6 +8,8 @@ Getting Ruby to talk to MySQL is annoying. Really annoying. Follow the instructi
 
 Shintolin isn't the best example of Ruby code; in particular, it's not very object-oriented, because I didn't properly understand object-orientation when I began working on version II of the game. There's probably a few other things I'd do differently now - still, you should see the orginal PHP version.
 
-If your changes are good, I'm not averse to adding them to the master version of Shintolin. E-mail me at: allthatyousee AT gmail DOT com and I'll see what I ca n do.
+The file test.rb might include a few failing tests; this doesn't neccesarily mean the game is broken. It's quite brittle in regards to the database (this is something that Ruby on Rails manages to fix, more or less, but it's method is complicated). Test coverage is also not very high, because I didn't start writing tests until very late into the project. Improving the testing framework might be a good way to get your head around the code base.
+
+If your changes are good, I'm not averse to adding them to the master version of Shintolin. E-mail me at: allthatyousee AT gmail DOT com and I'll see what I can do.
 
 Happy hacking!

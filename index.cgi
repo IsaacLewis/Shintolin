@@ -39,9 +39,9 @@ puts <<ENDTEXT
 </td>
 
 <td>
-<h1>Shintolin</h1> 
+<h1>Shintolin</h1>
 <h2>Explore. Settle. Trade. Conquer.</h2>
-<p><i>A free browser-based massively multiplayer game</i></p>
+<p><i>A free <a href='http://github.com/IsaacLewis/Shintolin'>open-source</a> browser-based massively multiplayer game</i></p>
 </td>
 
 <td>
@@ -203,6 +203,8 @@ puts <<ENDTEXT
 <p><b>Damaging buildings</b> was made more difficult.</p>
 
 <p>Shintolin was moved to a <b>new server</b>.</p>
+
+<p>Shintolin is now <a href='http://github.com/IsaacLewis/Shintolin'><b>open source</b></a>! 
 
 <h4>9th December</h4>
 <p>A serious <b>bug</b> (where users would see nothing but a white screen) was <b>fixed</b>.</p>
