@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_update (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2458</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_update</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>, <span class="ruby-identifier">column_values_hash</span>, <span class="ruby-identifier">not_clause</span>=<span class="ruby-keyword kw">nil</span>)
+<span class="ruby-comment cmt"># query = &quot;UPDATE users SET x = 9, y = 8, z = 0 WHERE id = 77&quot;</span>
+  <span class="ruby-identifier">query</span> = <span class="ruby-node">&quot;UPDATE `#{table}` SET&quot;</span>
+  <span class="ruby-identifier">updates_array</span> = <span class="ruby-identifier">column_values_hash</span>.<span class="ruby-identifier">map</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">column</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">value</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:Now</span>
+          <span class="ruby-node">&quot; `#{column}` = NOW()&quot;</span> 
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-node">&quot; `#{column}` = '#{Mysql.quote(value.to_s)}'&quot;</span> 
+      <span class="ruby-keyword kw">end</span>
+  }
+  <span class="ruby-identifier">query</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">updates_array</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">','</span>)
+  <span class="ruby-identifier">query</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">mysql_where</span>(<span class="ruby-identifier">where_clause</span>, <span class="ruby-identifier">not_clause</span>)  
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$mysql_debug</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">puts</span> <span class="ruby-identifier">query</span>
+  <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">$mysql</span>.<span class="ruby-identifier">query</span>(<span class="ruby-identifier">query</span>)
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

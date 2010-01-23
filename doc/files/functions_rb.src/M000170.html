@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>buy_skill (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 772</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">buy_skill</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">skill_id</span>)
+  <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-keyword kw">if</span>  <span class="ruby-identifier">user</span>.<span class="ruby-identifier">level</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-constant">Max_Level</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You have reached the current maximum level; you must unlearn &quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-value str">&quot;some skills before you can learn any more.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">can_buy_skill?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">skill_id</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You are not able to buy that skill; &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot;either you already have it, or lack the required prerequisites.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">skill</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:skill</span>, <span class="ruby-identifier">skill_id</span>)
+  <span class="ruby-identifier">xp_cost</span> = <span class="ruby-identifier">skill_cost</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">level</span>(<span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:type</span>]))
+  <span class="ruby-identifier">xp_field</span> = <span class="ruby-identifier">xp_field</span>(<span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:type</span>])
+
+  <span class="ruby-identifier">user</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user</span>[<span class="ruby-identifier">xp_field</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">xp_cost</span>
+    <span class="ruby-node">&quot;You do not have sufficient #{skill[:type]} xp to buy that skill.&quot;</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'users'</span>, <span class="ruby-identifier">xp_field</span>, <span class="ruby-identifier">user_id</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">xp_cost</span>, <span class="ruby-value">0</span>)
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'skills'</span>,{<span class="ruby-value str">'user_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user_id</span>, <span class="ruby-value str">'skill_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">skill_id</span>})
+    <span class="ruby-node">&quot;You have learned the arts of #{db_field(:skill, skill_id, :name)}.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

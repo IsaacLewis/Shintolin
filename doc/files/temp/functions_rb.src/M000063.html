@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_select_building (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1750</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_select_building</span>(<span class="ruby-identifier">user_id</span> = <span class="ruby-keyword kw">nil</span>)
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">&quot;\n\t&lt;select name=\&quot;building\&quot; style=\&quot;width:10em\&quot;&gt;\n&quot;</span>
+  <span class="ruby-identifier">buildings</span> = <span class="ruby-identifier">db_table</span>(<span class="ruby-identifier">:building</span>).<span class="ruby-identifier">values</span>
+  <span class="ruby-identifier">buildings</span> = <span class="ruby-identifier">buildings</span>.<span class="ruby-identifier">select</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">building</span><span class="ruby-operator">|</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-identifier">building</span>)} <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+  <span class="ruby-identifier">buildings</span>.<span class="ruby-identifier">each</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">building</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;\t\t&lt;option value=\&quot;#{building[:id]}\&quot;&gt;&quot;</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;#{describe_craft(building)}&lt;/option&gt;\n&quot;</span>
+  }
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\t&lt;/select&gt;\n&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>describe_tile (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1241</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">describe_tile</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>=<span class="ruby-value">0</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+  <span class="ruby-keyword kw">begin</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">desc</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">season</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">' '</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">describe_building</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_id'</span>].<span class="ruby-identifier">to_i</span>) 
+      <span class="ruby-comment cmt"># we pass building_id to avoid recomputing it</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">desc</span> = <span class="ruby-identifier">describe_building</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_id'</span>].<span class="ruby-identifier">to_i</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-comment cmt">#</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">desc</span> = <span class="ruby-value str">'NO DESCRIPTION. '</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">desc</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-identifier">desc</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

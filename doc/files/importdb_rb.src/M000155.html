@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load_messages (importdb.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File importdb.rb, line 99</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_messages</span>
+  <span class="ruby-identifier">old_msgs</span> = <span class="ruby-identifier">$old_db</span>.<span class="ruby-identifier">query</span>(<span class="ruby-value str">'SELECT * FROM messages'</span>)
+  <span class="ruby-identifier">old_msgs</span>.<span class="ruby-identifier">each_hash</span>{
+    <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+    <span class="ruby-comment cmt"># puts &quot;Speaker: #{row['speaker']} Target: #{row['target']}&quot;</span>
+    <span class="ruby-identifier">s</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'users'</span>,{<span class="ruby-value str">'name'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'speaker'</span>]})
+    <span class="ruby-identifier">s_id</span>, <span class="ruby-identifier">t_id</span> = <span class="ruby-value">0</span>,<span class="ruby-value">0</span>
+    <span class="ruby-identifier">s_id</span> = <span class="ruby-identifier">s</span>[<span class="ruby-value str">'id'</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">s</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">t</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'users'</span>,{<span class="ruby-value str">'name'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'target'</span>]}) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">row</span>[<span class="ruby-value str">'target'</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">t_id</span> = <span class="ruby-identifier">t</span>[<span class="ruby-value str">'id'</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">t</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'messages'</span>,{<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'ID'</span>],<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'message'</span>],<span class="ruby-value str">'speaker_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">s_id</span>,<span class="ruby-value str">'target_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">t_id</span>,<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>,<span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'type'</span>],<span class="ruby-value str">'time'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'time'</span>]})
+  }
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

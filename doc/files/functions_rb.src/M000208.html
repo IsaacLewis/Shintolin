@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>heal (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1441</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">heal</span> (<span class="ruby-identifier">healer</span>, <span class="ruby-identifier">target</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-identifier">item</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-identifier">item_desc</span> = <span class="ruby-identifier">a_an</span>(<span class="ruby-identifier">item</span>[<span class="ruby-identifier">:name</span>])
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">hp</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">maxhp</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">healer</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">target</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You're already at full health.&quot;</span>
+    <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{target.name} is already at full health.&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">hp</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">you_or_her</span>(<span class="ruby-identifier">healer</span>.<span class="ruby-identifier">mysql_id</span>,<span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>,<span class="ruby-value str">'You'</span>,<span class="ruby-keyword kw">false</span>) <span class="ruby-operator">+</span>
+    <span class="ruby-value str">&quot;are currently dazed and must be revived before healing items &quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-value str">&quot;have any effect.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">healer</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">hp_healed</span> = <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'users'</span>, <span class="ruby-value str">'hp'</span>,
+    <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-operator">+</span><span class="ruby-identifier">item_stat</span>(<span class="ruby-identifier">item_id</span>, <span class="ruby-identifier">:effect</span>, <span class="ruby-identifier">healer</span>), <span class="ruby-identifier">target</span>.<span class="ruby-identifier">maxhp</span>)
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">healer</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">xp</span> = (<span class="ruby-identifier">hp_healed</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-value">2</span>) <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+  <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:herbal</span>, <span class="ruby-identifier">xp</span>, <span class="ruby-identifier">healer</span>)
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">healer</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">target</span>
+    <span class="ruby-node">&quot;You use #{item_desc} on yourself, healing #{hp_healed} hp of damage.&quot;</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'action'</span>, 
+      <span class="ruby-node">&quot;$ACTOR used #{item_desc} on $TARGET, healing #{hp_healed} hp of damage.&quot;</span>, 
+      <span class="ruby-identifier">healer</span>, <span class="ruby-identifier">target</span>)
+    <span class="ruby-node">&quot;You use #{item_desc} on #{target.name}, &quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-node">&quot;healing #{hp_healed} hp of damage. &quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-node">&quot;They now have #{target.hp + hp_healed} hp.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

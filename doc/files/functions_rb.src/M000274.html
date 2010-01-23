@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>settle (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2771</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">settle</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">settlement_name</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>(<span class="ruby-identifier">:obj</span>)
+  <span class="ruby-identifier">can_settle</span>, <span class="ruby-identifier">settle_msg</span> = <span class="ruby-identifier">can_settle?</span>(<span class="ruby-identifier">tile</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">can_settle</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">settle_msg</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">can_build</span>, <span class="ruby-identifier">build_msg</span> = <span class="ruby-identifier">can_build?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:totem</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">can_build</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">build_msg</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'settlements'</span>,{<span class="ruby-value str">'name'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">settlement_name</span>}) <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;There is already a settlement of that name.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:log</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>,<span class="ruby-identifier">tile</span>.<span class="ruby-identifier">mysql_id</span>,{<span class="ruby-value str">'building_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">4</span>}) <span class="ruby-comment cmt"># 4 -&gt; totem pole</span>
+  <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'settlements'</span>,
+    {<span class="ruby-value str">'name'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">settlement_name</span>,<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>.<span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>.<span class="ruby-identifier">y</span>,<span class="ruby-value str">'founded'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">:Today</span>})
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'persistent'</span>, 
+    <span class="ruby-node">&quot;$ACTOR established the settlement of #{settlement_name} here&quot;</span>, <span class="ruby-identifier">user</span>)
+
+  <span class="ruby-node">&quot;You have established the settlement of #{settlement_name}. &quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-value str">&quot;May it grow and prosper.&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

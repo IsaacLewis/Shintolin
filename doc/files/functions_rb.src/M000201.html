@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>feed (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1301</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">feed</span>(<span class="ruby-identifier">feeder_id</span>, <span class="ruby-identifier">target_id</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-identifier">target</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">target_id</span>)
+  <span class="ruby-identifier">item</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-identifier">item_desc</span> = <span class="ruby-identifier">a_an</span>(<span class="ruby-identifier">item</span>[<span class="ruby-identifier">:name</span>])
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>[<span class="ruby-value str">'hunger'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-constant">Max_Hunger</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">feeder_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">target_id</span> 
+      <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You're not feeling hungry at the moment.&quot;</span>
+    <span class="ruby-keyword kw">else</span> 
+      <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You try offering #{item_desc} to #{target['name']}, &quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-value str">&quot;but they're not hungry.&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">feeder_id</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'users'</span>,<span class="ruby-value str">'hunger'</span>,<span class="ruby-identifier">target_id</span>,<span class="ruby-value">+1</span>,<span class="ruby-constant">Max_Hunger</span>)
+  <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'users'</span>,<span class="ruby-value str">'maxhp'</span>,<span class="ruby-identifier">target_id</span>,<span class="ruby-value">+3</span>,<span class="ruby-constant">Max_HP</span>)
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">feeder_id</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">feeder_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">target_id</span>
+    <span class="ruby-node">&quot;You eat #{item_desc}.&quot;</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'action'</span>, 
+      <span class="ruby-node">&quot;$ACTOR fed $TARGET #{item_desc}&quot;</span>, <span class="ruby-identifier">feeder_id</span>, <span class="ruby-identifier">target_id</span>)
+    <span class="ruby-node">&quot;You feed #{item_desc} to #{target['name']}.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

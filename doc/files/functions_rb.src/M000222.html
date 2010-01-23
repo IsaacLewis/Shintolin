@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_select_user (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1795</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_select_user</span>(<span class="ruby-identifier">where_clause</span>, <span class="ruby-identifier">not_clause</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">default</span>=<span class="ruby-value str">'No-one'</span>, 
+  <span class="ruby-identifier">animals</span>=<span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">buildings</span>=<span class="ruby-keyword kw">false</span>)
+
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">&quot;\n\t&lt;select name=\&quot;target\&quot; style=\&quot;width:10em\&quot;&gt;\n&quot;</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;\t\t&lt;option value=\&quot;0:user\&quot;&gt;#{default}&lt;/option&gt;\n&quot;</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">animals</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">false</span>
+    <span class="ruby-identifier">animals</span> = <span class="ruby-identifier">mysql_select</span>(<span class="ruby-value str">'animals'</span>,<span class="ruby-identifier">where_clause</span>,<span class="ruby-identifier">not_clause</span>)
+    <span class="ruby-identifier">animals</span>.<span class="ruby-identifier">each_hash</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">animal</span><span class="ruby-operator">|</span> 
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\t\t&lt;option &quot;</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'selected=&quot;yes&quot; '</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$target</span>.<span class="ruby-identifier">mysql_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">animal</span>[<span class="ruby-value str">'id'</span>]
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;value=\&quot;#{animal['id']}:animal\&quot;&gt;&quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot;#{describe_animals(1, animal['type_id'], :long)}&quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot;&lt;/option&gt;\n&quot;</span>
+    }
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">where_clause</span>[<span class="ruby-value str">'active'</span>]=<span class="ruby-value">1</span>
+  <span class="ruby-identifier">users</span> = <span class="ruby-identifier">mysql_select</span>(<span class="ruby-value str">'users'</span>,<span class="ruby-identifier">where_clause</span>,<span class="ruby-identifier">not_clause</span>)
+  <span class="ruby-identifier">users</span>.<span class="ruby-identifier">each_hash</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">user</span><span class="ruby-operator">|</span> 
+    <span class="ruby-identifier">display</span> =
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">yield</span>(<span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user</span>[<span class="ruby-value str">'id'</span>]))
+    <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">user</span>[<span class="ruby-value str">'name'</span>] <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\t\t&lt;option &quot;</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$target</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">$target</span>.<span class="ruby-identifier">mysql_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>[<span class="ruby-value str">'id'</span>]    
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'selected=&quot;yes&quot; '</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;value=\&quot;#{user['id']}:user\&quot;&gt;#{display}&lt;/option&gt;\n&quot;</span>
+  }
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">buildings</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">false</span>
+    <span class="ruby-identifier">building</span> = <span class="ruby-constant">Building</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">where_clause</span>[<span class="ruby-value str">'x'</span>], <span class="ruby-identifier">where_clause</span>[<span class="ruby-value str">'y'</span>])
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>.<span class="ruby-identifier">exists?</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\t\t&lt;option &quot;</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'selected=&quot;yes&quot; '</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$target</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Building</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;value=\&quot;#{building.x},#{building.y}:building\&quot;&gt;&quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-node">&quot;#{building.name}&lt;/option&gt;\n&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\t&lt;/select&gt;\n&quot;</span>
+
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

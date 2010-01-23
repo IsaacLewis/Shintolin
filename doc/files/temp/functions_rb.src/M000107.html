@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>offset_to_dir (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2527</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">offset_to_dir</span>(<span class="ruby-identifier">x_offset</span>, <span class="ruby-identifier">y_offset</span>, <span class="ruby-identifier">z_offset</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">length</span>=<span class="ruby-identifier">:short</span>)
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">z_offset</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">y_offset</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">-1</span>
+           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">x_offset</span>
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">-1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;NW&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;Northwest&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;N&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;North&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;NE&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;Northeast&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+           <span class="ruby-keyword kw">end</span>
+         <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span>
+           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">x_offset</span>
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">-1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;W&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;West&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">nil</span>
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;E&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;East&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+           <span class="ruby-keyword kw">end</span>
+         <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span>
+           <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">x_offset</span>
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">-1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;SW&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;Southwest&quot;</span> <span class="ruby-keyword kw">end</span>
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;S&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;South&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;SE&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;Southeast&quot;</span> <span class="ruby-keyword kw">end</span> 
+             <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+           <span class="ruby-keyword kw">end</span>
+         <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+       <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;In&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;inside&quot;</span> <span class="ruby-keyword kw">end</span> 
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">-1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span><span class="ruby-operator">==</span><span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">&quot;Out&quot;</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;outside&quot;</span> <span class="ruby-keyword kw">end</span> 
+    <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

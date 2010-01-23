@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>msg_no_ap (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2181</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">msg_no_ap</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">player</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">msg</span> = <span class="ruby-value str">'You must wait for your AP to recover (about '</span>
+  <span class="ruby-identifier">hours</span> = ((<span class="ruby-value">0</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">player</span>[<span class="ruby-value str">'ap'</span>].<span class="ruby-identifier">to_f</span>) <span class="ruby-operator">/</span> <span class="ruby-identifier">ap_recovery</span>(<span class="ruby-identifier">user_id</span>)).<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">hours</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">' hours, '</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hours</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+  <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">minutes_to_hour</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">' minutes'</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-value str">') before you can act.'</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

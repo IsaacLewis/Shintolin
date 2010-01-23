@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>can_build? (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 800</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">can_build?</span> (<span class="ruby-identifier">user</span>, <span class="ruby-identifier">building</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>(<span class="ruby-identifier">:obj</span>)
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Symbol</span>
+    <span class="ruby-identifier">building</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">building</span>) <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_skill</span>])
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-value str">&quot;You don't have the required skills &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot;to build #{a_an(building[:name])}.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:special</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">:terrain</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">terrain</span> <span class="ruby-operator">!=</span> <span class="ruby-value">1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">terrain</span> <span class="ruby-operator">!=</span> <span class="ruby-value">4</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-node">&quot;You cannot build #{tile.terrain} #{a_an(building[:name])} here.&quot;</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:size</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">:large</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">terrain</span>, <span class="ruby-identifier">:build_large?</span>) <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-node">&quot;You cannot build #{a_an(building[:name])} here.&quot;</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">terrain</span>, <span class="ruby-identifier">:build_small?</span>) <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">true</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-node">&quot;You cannot build #{a_an(building[:name])} here.&quot;</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:prereq</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> 
+    <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">building_id</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:prereq</span>], <span class="ruby-identifier">:id</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-node">&quot;You cannot build #{a_an(building[:name])} here.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:settlement_level</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">a_an</span>(<span class="ruby-identifier">building</span>[<span class="ruby-identifier">:name</span>]).<span class="ruby-identifier">capitalize</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot; can only be built in an established settlement.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:tools</span>])
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-value str">&quot;You need &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">describe_items_list</span>(<span class="ruby-identifier">building</span>[<span class="ruby-identifier">:tools</span>], <span class="ruby-value str">'long'</span>) <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot; to build #{a_an(building[:name])}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:materials</span>])
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-value str">&quot;You need &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">describe_items_list</span>(<span class="ruby-identifier">building</span>[<span class="ruby-identifier">:materials</span>], <span class="ruby-value str">'long'</span>) <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot; to build #{a_an(building[:name])}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

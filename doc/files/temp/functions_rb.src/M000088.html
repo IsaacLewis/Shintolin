@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_bounded_update (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2195</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">field</span>, <span class="ruby-identifier">where_clause</span>, <span class="ruby-identifier">change</span>, <span class="ruby-identifier">bound</span>=<span class="ruby-keyword kw">nil</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">bound</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">change</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">bound</span> = <span class="ruby-value">1000000</span><span class="ruby-comment cmt"># an arbitrarily large number</span>
+    <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">bound</span> = <span class="ruby-value">0</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">bound</span> = <span class="ruby-identifier">bound</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">current_amt</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>)[<span class="ruby-identifier">field</span>].<span class="ruby-identifier">to_i</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">change</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+  <span class="ruby-comment cmt"># if change is positive, treat bound as an upper bound</span>
+    <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">current_amt</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">change</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">bound</span>
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>, {<span class="ruby-identifier">field</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">current_amt</span><span class="ruby-operator">+</span><span class="ruby-identifier">change</span>)})
+      <span class="ruby-identifier">change</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>, {<span class="ruby-identifier">field</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">bound</span>})
+      <span class="ruby-identifier">bound</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">current_amt</span> <span class="ruby-comment cmt"># actual amount changed</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+  <span class="ruby-comment cmt"># if change is negative, treat bound as a lower bound</span>
+    <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">current_amt</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">change</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">bound</span>
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>, {<span class="ruby-identifier">field</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">current_amt</span><span class="ruby-operator">+</span><span class="ruby-identifier">change</span>)})
+      <span class="ruby-identifier">change</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>, {<span class="ruby-identifier">field</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">bound</span>})
+      <span class="ruby-identifier">bound</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">current_amt</span> <span class="ruby-comment cmt"># actual amount changed   </span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

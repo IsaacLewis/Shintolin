@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>tile_dir (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 3060</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tile_dir</span>(<span class="ruby-identifier">start_x</span>, <span class="ruby-identifier">start_y</span>, <span class="ruby-identifier">start_z</span>, <span class="ruby-identifier">target_x</span>, <span class="ruby-identifier">target_y</span>)
+<span class="ruby-comment cmt"># When I'm standing on start_x, start_y, start_z,</span>
+<span class="ruby-comment cmt"># What direction should appear on tile target_x, target_z?</span>
+
+  <span class="ruby-identifier">x_offset</span> = <span class="ruby-identifier">target_x</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">start_x</span>
+  <span class="ruby-identifier">y_offset</span> = <span class="ruby-identifier">target_y</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">start_y</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">start_z</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> 
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x_offset</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">y_offset</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">valid_location?</span>(<span class="ruby-identifier">target_x</span>, <span class="ruby-identifier">target_y</span>, <span class="ruby-value">1</span>) <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'Enter'</span>
+      <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">offset_to_dir</span>(<span class="ruby-identifier">x_offset</span>,<span class="ruby-identifier">y_offset</span>,<span class="ruby-value">0</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x_offset</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">y_offset</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'Exit'</span>
+    <span class="ruby-keyword kw">else</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

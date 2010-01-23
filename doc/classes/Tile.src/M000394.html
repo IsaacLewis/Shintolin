@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>settlement_id (Tile)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 371</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">settlement_id</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@settlement_id</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> 
+      <span class="ruby-identifier">settlement</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'settlements'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">x</span><span class="ruby-operator">-</span><span class="ruby-value">2</span><span class="ruby-operator">..</span><span class="ruby-identifier">x</span><span class="ruby-operator">+</span><span class="ruby-value">2</span>),<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">y</span><span class="ruby-operator">-</span><span class="ruby-value">2</span><span class="ruby-operator">..</span><span class="ruby-identifier">y</span><span class="ruby-operator">+</span><span class="ruby-value">2</span>)})
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">settlement</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">then</span> <span class="ruby-ivar">@settlement</span> = <span class="ruby-keyword kw">false</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-comment cmt"># there's a settlement in the area, but is it close enough?</span>
+        <span class="ruby-identifier">x_offset</span> = <span class="ruby-identifier">settlement</span>[<span class="ruby-value str">'x'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">x</span>
+        <span class="ruby-identifier">y_offset</span> = <span class="ruby-identifier">settlement</span>[<span class="ruby-value str">'y'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">y</span>
+        <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">x_offset</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">x_offset</span>) <span class="ruby-operator">+</span> (<span class="ruby-identifier">y_offset</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">y_offset</span>) <span class="ruby-operator">&lt;=</span> <span class="ruby-value">5</span>
+          <span class="ruby-ivar">@settlement_id</span> = <span class="ruby-identifier">settlement</span>[<span class="ruby-value str">'id'</span>].<span class="ruby-identifier">to_i</span>
+          <span class="ruby-ivar">@settlement</span> = <span class="ruby-constant">Settlement</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@settlement_id</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-ivar">@settlement_id</span> = <span class="ruby-keyword kw">false</span>
+          <span class="ruby-ivar">@settlement</span> = <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-ivar">@settlement_id</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,266 @@
+a
+{
+color: #407395;
+font-weight: bold;
+text-decoration: none
+}
+body 
+{
+background: #d0d0b0;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif
+}
+form
+{
+font-size: normal;
+margin: 2px;
+padding: 0px 0px 0px 0px;
+}
+hr
+{
+color:#b8b890;
+}
+img
+{
+border:thick solid #c8c8a0;
+background-image: url('images/parchmentbg_dark.jpg');
+}
+input
+{
+color: #000;
+background: #99ccff;
+border: 2px outset #ccdaff;
+font-size: 0.8em%;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+padding: 1px 2px 1px 2px;
+text-decoration: none;
+}
+input.text
+{
+color: #000;
+background: #ffffff;
+border: 1px outset #aaaaaa;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+margin-bottom: 1px;
+margin-top: 1px
+}
+p
+{
+line-height:1em;
+}
+select
+{
+color: #000;
+background: #ffffff;
+border: 1px outset #aaaaaa;
+margin: 1px;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif
+}
+td
+{
+vertical-align:top;
+text-align: center;
+}
+td.map
+{
+width:100px;
+height:100px;
+overflow:hidden;
+background-repeat:no-repeat;
+border:0px;
+}
+textarea
+{
+color: #000;
+background: #ffffff;
+border: 1px outset #aaaaaa;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+margin-bottom: 1px;
+margin-top: 1px
+}
+
+.actionbox
+{
+width:36em;
+left:543px;
+}
+.beigebox
+{
+border:thick solid #c8c8a0;
+background-image: url('images/parchmentbg_dark.jpg');
+padding:4px;
+width:15em;
+}
+.bigbox
+{
+width:1126px;
+height:700px;
+background:#d8d8b8
+}
+.bought
+{
+color:#000000
+}
+.unbought
+{
+color:#777799
+}
+.buttonlink
+{
+color: #000;
+background: #99ccff;
+border: 2px outset #ccdaff;
+font-size: 0.8em;
+font-weight: normal;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+padding: 2px 3px 2px 3px;
+margin: 1px;
+text-decoration: none;
+}
+.enterbutton
+{
+width: 44px;
+height: 24px;
+margin:0px;
+font-weight: bold;
+position: relative;
+top: 2px;
+}
+.gamebox
+{
+padding:2px;
+border:thick solid #c8c8a0;
+background-image: url('images/parchmentbg_dark.jpg');
+text-align: left;
+}
+.gamebox-light
+{
+padding:2px;
+border:thick solid #c8c8a0;
+background-image: url('images/parchmentbg.jpg');
+text-align: left;
+}
+.buttonsbox
+{
+width:516px;
+border-top-width:0px;
+}
+.chatbox
+{
+width:25em;
+max-width:25em;
+height: 3em;
+overflow: scroll;
+}
+.header
+{
+margin-left: 80px;
+}
+.infobox
+{
+border:thick solid #c8c8a0;
+width:36em;
+}
+.infotable
+{
+position:absolute;
+top: 5px;
+left:540px;
+}
+.invbox
+{
+width:10em;
+}
+.locationbox
+{
+width:520px;
+text-align:center;
+font-size:130%;
+background:#cccc99;
+margin-bottom:0px;
+margin-top:0px;
+opacity:.65
+}
+.map
+{
+postion: absolute;
+width: 520px;
+border:thick solid #c8c8a0;
+background-image: url('images/parchmentbg.jpg');
+}
+.mapdata
+{
+font-size: 80%;
+background: #d0d0a0;
+margin:0px;
+padding: 0px 2px 0px 2px;
+position: relative;
+top: 10px;
+}
+.movebutton
+{
+font-size:70%;
+width: 60px;
+height: 24px;
+margin: 0px;
+position: relative;
+top: 2px;
+}
+.msgbox
+{
+width:25em;
+border-bottom-width:0px;
+}
+.parchment
+{
+background-image: url('images/parchmentbg.jpg');
+}
+.small
+{
+font-size:80%
+}
+.statsbox
+{
+width:516px;
+border-top-width:0px;
+}
+.time
+{
+font-size:80%
+}
+.persistent
+{
+color:#000000
+}
+.talk
+{
+color:#111155
+}
+.shout
+{
+color:#661111
+}
+.whisper
+{
+color:#505070
+}
+.slashme
+{
+color:#227722
+}
+.ally
+{
+color:#389038
+}
+.neutral
+{
+color:#407395
+}
+.enemy
+{
+color:#902020
+}
+.ipwarning
+{
+font-weight:bold;
+color:#902020
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_put_message (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2397</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-identifier">type</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">speaker</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">target</span>=<span class="ruby-keyword kw">nil</span>)
+
+  <span class="ruby-comment cmt"># Delete this after OOP refactoring</span>
+  <span class="ruby-identifier">speaker_id</span> =
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">speaker</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-value">0</span>
+  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+    <span class="ruby-identifier">speaker</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">mysql_id</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">target_id</span> =
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-value">0</span>
+  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Integer</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">String</span>)
+    <span class="ruby-identifier">target</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">speaker</span>, <span class="ruby-identifier">target</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">speaker_id</span>), <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">target_id</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">exists?</span>
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'messages'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">x</span>, <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">y</span>,
+      <span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">z</span>,<span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">type</span>,<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">message</span>,
+      <span class="ruby-value str">'speaker_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">speaker_id</span>,<span class="ruby-value str">'target_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">target_id</span>})
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'messages'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>,
+      <span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>,<span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">type</span>,<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">message</span>,
+      <span class="ruby-value str">'speaker_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>,<span class="ruby-value str">'target_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">target_id</span>})  
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>use (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 3099</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">use</span> (<span class="ruby-identifier">user</span>, <span class="ruby-identifier">target</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">target</span>.<span class="ruby-identifier">exists?</span>  <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">target</span> = <span class="ruby-identifier">user</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">same_location?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">target</span>) 
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;That person isn't in the vicinity.&quot;</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">item</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">item_id</span>) 
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You don't have any #{item[:plural]}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">item_desc</span> = <span class="ruby-identifier">a_an</span>(<span class="ruby-identifier">item</span>[<span class="ruby-identifier">:name</span>])
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:use</span>].<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">String</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:use</span>] <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:use</span>]
+    <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-node">&quot;You try using #{a_an(item[:name])}, but it doesn't seem to achieve much.&quot;</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:weapon</span>
+      <span class="ruby-value str">&quot;Use the 'Attack' button to attack.&quot;</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:food</span>
+      <span class="ruby-identifier">feed</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">item_id</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:heal</span>
+      <span class="ruby-identifier">heal</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">target</span>, <span class="ruby-identifier">item_id</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:noobcake</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">level</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">target</span>
+          <span class="ruby-value str">&quot;Suddenly the sickly sweet noobcakes done seem quite so &quot;</span> <span class="ruby-operator">+</span>
+          <span class="ruby-value str">&quot;tempting anymore. Try finding a different source of food.&quot;</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-node">&quot;You offer a noobcake to #{target.name}. &quot;</span> <span class="ruby-operator">+</span>
+            <span class="ruby-value str">&quot;They wrinkle their nose in disgust.&quot;</span> <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">feed</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">item_id</span>) <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:revive</span>
+      <span class="ruby-identifier">revive</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

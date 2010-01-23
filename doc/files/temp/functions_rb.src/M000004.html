@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>add_fuel (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 508</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_fuel</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">player</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>])
+ <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{user_id}, class #{user_id.class}&quot;</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">tie</span>[<span class="ruby-value str">'building_id'</span>], <span class="ruby-identifier">:actions</span>).<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:add_fuel</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;There's nothing to add fuel to here.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_hp'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">30</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;The fire is very large and is too hot to approach.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">:stick</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You don't have any sticks to add to the fire.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-value">1</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]},
+    {<span class="ruby-value str">'building_hp'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_hp'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>)})
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'action'</span>, <span class="ruby-value str">&quot;$ACTOR threw a stick on the fire&quot;</span>, <span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:wander</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-value str">&quot;You throw a stick on the fire.&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

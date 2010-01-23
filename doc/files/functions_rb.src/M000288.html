@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>tick_restore_search (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2989</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tick_restore_search</span>
+  <span class="ruby-identifier">tiles</span> = <span class="ruby-identifier">mysql_select_all</span>(<span class="ruby-value str">'grid'</span>)
+  <span class="ruby-identifier">tiles</span>.<span class="ruby-identifier">each_hash</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">tile</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">restore_odds</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>], <span class="ruby-identifier">:restore_odds</span>)
+    <span class="ruby-identifier">restore_odds</span> = <span class="ruby-value">10</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">restore_odds</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">100</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">restore_odds</span>
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>]
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;8&quot;</span> <span class="ruby-comment cmt"># 8 -&gt; 'dirt track'</span>
+          <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]},
+            {<span class="ruby-value str">'hp'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">1</span>, <span class="ruby-value str">'terrain'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>})
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'grid'</span>,<span class="ruby-value str">'hp'</span>,
+            {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]}, <span class="ruby-value">+1</span>, <span class="ruby-value">3</span>)
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  }
+  <span class="ruby-value str">'Search rates restored!'</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

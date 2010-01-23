@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>write (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 3272</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">write</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">msg</span>)
+  <span class="ruby-identifier">building</span> = <span class="ruby-constant">Building</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">building</span>.<span class="ruby-identifier">exists?</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'There is no building to write on in the vicinity.'</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>.<span class="ruby-identifier">unwritable</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You cannot write on #{building.a}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:hand_axe</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:stone_carpentry</span>)
+     <span class="ruby-keyword kw">return</span> <span class="ruby-value str">' You need a hand axe or a set of stone carpentry tools '</span> <span class="ruby-operator">+</span>
+     <span class="ruby-value str">'to write on the building.'</span> <span class="ruby-keyword kw">end</span>
+
+  
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user</span>, <span class="ruby-value">-3</span>)
+
+  <span class="ruby-comment cmt"># check for existing messages</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'writings'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>, <span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">z</span>}) <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'writings'</span>, 
+      {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>, <span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">z</span>, <span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">msg</span>})
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'writings'</span>, 
+      {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>, <span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">z</span>}, {<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">msg</span>})
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'persistent'</span>, 
+      <span class="ruby-node">&quot;$ACTOR wrote \&quot;#{msg}\&quot; on #{building.name}&quot;</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">mysql_id</span>)
+  <span class="ruby-node">&quot;You write \&quot;#{msg}\&quot; on #{building.name}.&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

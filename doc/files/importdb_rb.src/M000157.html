@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load_towns (importdb.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File importdb.rb, line 123</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_towns</span>
+
+  <span class="ruby-identifier">towns</span> = <span class="ruby-identifier">$old_db</span>.<span class="ruby-identifier">query</span>(<span class="ruby-value str">'SELECT * FROM `settlements`'</span>)
+  <span class="ruby-identifier">towns</span>.<span class="ruby-identifier">each_hash</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">desc</span> = <span class="ruby-identifier">insert_breaks</span>(<span class="ruby-identifier">row</span>[<span class="ruby-value str">'description'</span>])
+    <span class="ruby-identifier">leader_id</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'users'</span>,
+      {<span class="ruby-value str">'name'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'leader'</span>]})[<span class="ruby-value str">'id'</span>]
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'settlements'</span>,  
+      {<span class="ruby-value str">'name'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'name'</span>], <span class="ruby-value str">'founded'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'founded'</span>], <span class="ruby-value str">'title'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'title'</span>], <span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'X'</span>], <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'Y'</span>], <span class="ruby-value str">'motto'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'motto'</span>], <span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'ID'</span>], <span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'type'</span>], <span class="ruby-value str">'website'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">''</span>, <span class="ruby-value str">'description'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">desc</span>, <span class="ruby-value str">'image'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'image'</span>], <span class="ruby-value str">'leader_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">leader_id</span>})  
+  }
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_get_messages (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2321</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_get_messages</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">user</span>)
+  <span class="ruby-identifier">query</span> = <span class="ruby-value str">&quot;SELECT * FROM `messages` WHERE &quot;</span> <span class="ruby-operator">+</span>
+
+  <span class="ruby-comment cmt"># spoken, whispered, game or \me at same x, y, z</span>
+  <span class="ruby-value str">&quot;((`type` = 'talk' OR `type` = 'whisper' &quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-value str">&quot;OR `type` = 'slash_me' OR `type` = 'game') &quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;AND `x` = '#{x}' AND `y` = '#{y}' AND `z` = '#{z}' &quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;AND (`time` + INTERVAL 1 MINUTE) &gt; '#{user.lastaction}')&quot;</span> <span class="ruby-operator">+</span>
+
+  <span class="ruby-comment cmt"># shouted or distant at same x, y</span>
+  <span class="ruby-value str">&quot; OR ((`type` = 'shout' OR `type` = 'distant') AND &quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;`x` = '#{x}' AND `y` = '#{y}'&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;AND (`time` + INTERVAL 1 MINUTE) &gt; '#{user.lastaction}')&quot;</span> <span class="ruby-operator">+</span>
+
+  <span class="ruby-comment cmt"># action targeted at player</span>
+  <span class="ruby-node">&quot; OR (`type` = 'action' AND `target_id` = '#{user.mysql_id}'&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;AND (`time` + INTERVAL 1 MINUTE) &gt; '#{user.lastaction}')&quot;</span> <span class="ruby-operator">+</span>
+
+  <span class="ruby-comment cmt"># persistent messages at same x, y, z</span>
+  <span class="ruby-value str">&quot; OR (`type` = 'persistent' AND &quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;`x` = '#{x}' AND `y` = '#{y}' AND `z` = '#{z}'&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;AND (`time` + INTERVAL 24 HOUR) &gt; '#{user.lastaction}')&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-value str">&quot; ORDER BY `time` DESC&quot;</span>
+
+  <span class="ruby-identifier">messages</span> = <span class="ruby-identifier">$mysql</span>.<span class="ruby-identifier">query</span>(<span class="ruby-identifier">query</span>)
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

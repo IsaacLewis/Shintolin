@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>search (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2699</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">search</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">player</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>])
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-value">-1</span>)
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">player</span>[<span class="ruby-value str">'z'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You look around the building, but find nothing of use.'</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">search</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>], <span class="ruby-identifier">:search</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">search</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'There appears to be nothing to find here.'</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">items</span> = <span class="ruby-identifier">search</span>.<span class="ruby-identifier">clone</span>
+  <span class="ruby-comment cmt"># modify search rates based on season</span>
+  <span class="ruby-identifier">items</span>.<span class="ruby-identifier">collect</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">item</span>, <span class="ruby-identifier">odds</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">season_mod</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item</span>, <span class="ruby-identifier">season</span>)
+      <span class="ruby-comment cmt"># puts season_mod</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">season_mod</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">items</span>[<span class="ruby-identifier">item</span>] = <span class="ruby-identifier">odds</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">season_mod</span> <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Item: #{item} #{items[item]}%&quot;</span>
+  }
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'hp'</span>]
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;0&quot;</span>
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">clear</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;1&quot;</span>
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">item</span>,<span class="ruby-identifier">odds</span><span class="ruby-operator">|</span> <span class="ruby-identifier">items</span>[<span class="ruby-identifier">item</span>] = <span class="ruby-identifier">odds</span> <span class="ruby-operator">*</span> <span class="ruby-value">0</span><span class="ruby-value">.5</span>}
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;2&quot;</span>
+      <span class="ruby-identifier">items</span>.<span class="ruby-identifier">collect</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">item</span>,<span class="ruby-identifier">odds</span><span class="ruby-operator">|</span> <span class="ruby-identifier">items</span>[<span class="ruby-identifier">item</span>] = <span class="ruby-identifier">odds</span> <span class="ruby-operator">*</span> <span class="ruby-value">0</span><span class="ruby-value">.75</span>}
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">total_odds</span> = <span class="ruby-identifier">sum_coll</span>(<span class="ruby-identifier">items</span>.<span class="ruby-identifier">values</span>)
+  <span class="ruby-comment cmt"># puts total_odds</span>
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">total_odds</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">hp_msg</span> = <span class="ruby-value str">'This area appears to have been picked clean.'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-value">10</span>)
+    <span class="ruby-identifier">hp_msg</span> = <span class="ruby-value str">'This area appears to have very limited resources.'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">11</span><span class="ruby-operator">..</span><span class="ruby-value">20</span>)
+      <span class="ruby-identifier">hp_msg</span> = <span class="ruby-value str">'This area appears to have limited resources.'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">21</span><span class="ruby-operator">..</span><span class="ruby-value">30</span>)
+      <span class="ruby-identifier">hp_msg</span> = <span class="ruby-value str">'This area appears to have average resources.'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">31</span><span class="ruby-operator">..</span><span class="ruby-value">200</span>)
+      <span class="ruby-identifier">hp_msg</span> = <span class="ruby-value str">'This area appears to have abundant resources.'</span> 
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">found_item</span> = <span class="ruby-identifier">random_select</span>(<span class="ruby-identifier">items</span>,<span class="ruby-value">100</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">found_item</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Symbol</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">100</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Search_Dmg_Chance</span>
+      <span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'grid'</span>,<span class="ruby-value str">'hp'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]},<span class="ruby-value">-1</span>,<span class="ruby-value">0</span>)
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user_id</span>,<span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:item</span>,<span class="ruby-identifier">found_item</span>,<span class="ruby-identifier">:id</span>),<span class="ruby-value">+1</span>)
+    <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:wander</span>, <span class="ruby-value">1</span>, <span class="ruby-identifier">user_id</span>)
+    <span class="ruby-value str">'Searching the area, you find '</span> <span class="ruby-operator">+</span> 
+    <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">found_item</span>, <span class="ruby-identifier">:desc</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">'. '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">hp_msg</span>
+  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">found_item</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">String</span>
+    <span class="ruby-identifier">found_item</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-value str">'Searching the area, you find nothing of use. '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">hp_msg</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

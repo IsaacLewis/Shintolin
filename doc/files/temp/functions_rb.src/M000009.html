@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>attack (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 581</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">attack</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-identifier">target</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-comment cmt"># it = db_field(:item, &quot;1&quot;, :name)</span>
+  <span class="ruby-comment cmt"># return &quot;attack #{attacker.name}, #{target.name}, #{it}, #{item_id}, #{item_id.class}&quot;</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-identifier">item_id</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item_id</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;24&quot;</span> <span class="ruby-comment cmt"># 24 -&gt; fist</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You don't have #{a_an(db_field(:item, item_id, :name))}&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">hp</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You attack #{target.name}, but they're already knocked out.&quot;</span> 
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">same_location?</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-identifier">target</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{target.name.capitalize} isn't in the vicinity.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">weapon</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You can't attack with that.&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">weapon</span>[<span class="ruby-identifier">:use</span>] <span class="ruby-operator">!=</span> <span class="ruby-identifier">:weapon</span>
+
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-value">-1</span>)
+
+  <span class="ruby-identifier">accuracy</span> = <span class="ruby-identifier">item_stat</span>(<span class="ruby-identifier">item_id</span>, <span class="ruby-identifier">:accuracy</span>, <span class="ruby-identifier">attacker</span>)
+  <span class="ruby-identifier">dmg</span> = <span class="ruby-identifier">item_stat</span>(<span class="ruby-identifier">item_id</span>, <span class="ruby-identifier">:effect</span>, <span class="ruby-identifier">attacker</span>)
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">100</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">accuracy</span>
+    <span class="ruby-identifier">msg</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:weapon_class</span>, <span class="ruby-identifier">weapon</span>[<span class="ruby-identifier">:weapon_class</span>], <span class="ruby-identifier">:miss_msg</span>) <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">weapon</span>[<span class="ruby-identifier">:name</span>] <span class="ruby-operator">+</span>
+      <span class="ruby-value str">', but missed!'</span> 
+    <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">attack_response</span>(<span class="ruby-identifier">target</span>, <span class="ruby-identifier">attacker</span>)
+
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">insert_names</span>(<span class="ruby-identifier">msg</span>, <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql_id</span>, 
+      <span class="ruby-identifier">target</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">:no_link</span>)
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">kill</span> = <span class="ruby-identifier">deal_damage</span>(<span class="ruby-identifier">dmg</span>, <span class="ruby-identifier">target</span>)
+
+  <span class="ruby-identifier">msg</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:weapon_class</span>, <span class="ruby-identifier">weapon</span>[<span class="ruby-identifier">:weapon_class</span>], <span class="ruby-identifier">:hit_msg</span>) <span class="ruby-operator">+</span> 
+    <span class="ruby-identifier">weapon</span>[<span class="ruby-identifier">:name</span>]
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">kill</span>
+    <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:warrior</span>, (<span class="ruby-value">20</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">dmg</span>), <span class="ruby-identifier">attacker</span>)
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;User&quot;</span>
+        <span class="ruby-identifier">mysql_change_stat</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-value str">'kills'</span>, <span class="ruby-value">+1</span>)
+        <span class="ruby-identifier">mysql_change_stat</span>(<span class="ruby-identifier">target</span>, <span class="ruby-value str">'deaths'</span>, <span class="ruby-value">+1</span>)
+        <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;, knocking them out!&quot;</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Animal&quot;</span>
+        <span class="ruby-identifier">target</span>.<span class="ruby-identifier">loot</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> 
+          <span class="ruby-operator">|</span><span class="ruby-identifier">item</span>, <span class="ruby-identifier">amt</span><span class="ruby-operator">|</span> <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-identifier">item</span>, <span class="ruby-operator">+</span><span class="ruby-identifier">amt</span>) <span class="ruby-keyword kw">end</span>      
+        <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;, killing it! From the carcass you collect &quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-node">&quot;#{describe_items_list(target.loot, 'long')}.&quot;</span>
+
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Building&quot;</span>
+        <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span><span class="ruby-value str">&quot;, destroying it!&quot;</span>        
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">xp</span> = ((<span class="ruby-identifier">dmg</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>) <span class="ruby-operator">/</span> <span class="ruby-value">2</span>).<span class="ruby-identifier">ceil</span>
+    <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:warrior</span>, <span class="ruby-identifier">xp</span>, <span class="ruby-identifier">attacker</span>)
+    <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; for #{dmg} hp damage.&quot;</span>
+    <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">attack_response</span>(<span class="ruby-identifier">target</span>, <span class="ruby-identifier">attacker</span>)
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">100</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">weapon</span>[<span class="ruby-identifier">:break_odds</span>]
+    <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-value">-1</span>) 
+    <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; Your #{weapon[:name]} breaks! You discard the useless pieces.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">User</span>
+    <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'action'</span>, <span class="ruby-identifier">msg</span>, <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>)
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'action'</span>, <span class="ruby-identifier">msg</span>, <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql_id</span>) <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">insert_names</span>(<span class="ruby-identifier">msg</span>, <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">target</span>.<span class="ruby-identifier">name</span>, 
+    <span class="ruby-identifier">attacker</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">:no_link</span>)
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

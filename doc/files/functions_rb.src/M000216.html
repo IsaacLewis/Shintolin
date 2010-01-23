@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_move_button (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1696</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_move_button</span>(<span class="ruby-identifier">dir</span>, <span class="ruby-identifier">ap</span>=<span class="ruby-value">0</span>)
+<span class="ruby-comment cmt"># displays a move button to travel in direction 'dir'</span>
+<span class="ruby-comment cmt"># if ap is provided, display that on tile</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ap</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">dir</span> <span class="ruby-operator">==</span> <span class="ruby-value str">''</span> <span class="ruby-operator">||</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">html</span> = <span class="ruby-value str">''</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span> = <span class="ruby-identifier">dir_to_offset</span>(<span class="ruby-identifier">dir</span>)
+    <span class="ruby-identifier">html</span> = <span class="ruby-value str">&quot;\n\t\t\t&lt;form method = \&quot;POST\&quot; action=\&quot;game.cgi\&quot;&gt;&quot;</span> <span class="ruby-operator">+</span> 
+    <span class="ruby-value str">&quot;\n\t\t\t\t&lt;input class=\&quot;movebutton\&quot; type=\&quot;submit\&quot; value=\&quot;&quot;</span> <span class="ruby-operator">+</span> 
+    <span class="ruby-identifier">dir</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">ap</span> = <span class="ruby-value">1</span> <span class="ruby-keyword kw">end</span> <span class="ruby-comment cmt"># ap always 1 when entering/exiting</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ap</span> <span class="ruby-operator">!=</span> <span class="ruby-value">1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">ap</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">': '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ap</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'ap'</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'&quot;/&gt;'</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n\t\t\t&quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'action'</span>,<span class="ruby-value str">'move'</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\t\t\t&quot;</span> <span class="ruby-operator">+</span> 
+    <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'x'</span>, <span class="ruby-identifier">x</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\t\t\t&quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'y'</span>, <span class="ruby-identifier">y</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\t\t\t&quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'z'</span>, <span class="ruby-identifier">z</span>) <span class="ruby-operator">+</span> 
+    <span class="ruby-value str">&quot;&lt;/form&gt;&quot;</span> 
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">html</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>move (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2098</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">move</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>)
+  <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span> = <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">y</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">z</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">mover</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">current_tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">mover</span>[<span class="ruby-value str">'x'</span>], <span class="ruby-identifier">mover</span>[<span class="ruby-value str">'y'</span>])
+  <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span> <span class="ruby-identifier">user_id</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">weight</span>(<span class="ruby-identifier">user</span>) <span class="ruby-operator">&gt;</span> <span class="ruby-constant">Max_Weight</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You are over-encumbered and cannot move.'</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+  <span class="ruby-comment cmt"># move player in cardinal direction, if player is not in building</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mover</span>[<span class="ruby-value str">'z'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+      <span class="ruby-value str">'You must leave the building before you can move '</span> <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">offset_to_dir</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">:long</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">'.'</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-comment cmt"># get ap cost for target tile</span>
+      <span class="ruby-identifier">target_x</span> = <span class="ruby-identifier">mover</span>[<span class="ruby-value str">'x'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>
+      <span class="ruby-identifier">target_y</span> = <span class="ruby-identifier">mover</span>[<span class="ruby-value str">'y'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y</span>
+      <span class="ruby-identifier">target_tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">target_x</span>, <span class="ruby-identifier">target_y</span>)
+      <span class="ruby-identifier">ap_cost</span> = <span class="ruby-identifier">ap_cost</span>(<span class="ruby-identifier">target_tile</span>[<span class="ruby-value str">'terrain'</span>], <span class="ruby-identifier">current_tile</span>[<span class="ruby-value str">'terrain'</span>], <span class="ruby-identifier">user_id</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ap_cost</span> <span class="ruby-operator">!=</span> <span class="ruby-value">-1</span>
+        <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">ap_cost</span>)
+        <span class="ruby-identifier">xp</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">target_tile</span>[<span class="ruby-value str">'terrain'</span>], <span class="ruby-identifier">:xp</span>)
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">xp</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+          <span class="ruby-identifier">xp</span> = <span class="ruby-identifier">rand_to_i</span>(<span class="ruby-identifier">xp</span>)
+          <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:wander</span>, <span class="ruby-identifier">xp</span>, <span class="ruby-identifier">user_id</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'users'</span>,<span class="ruby-identifier">user_id</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">target_x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">target_y</span>})
+        <span class="ruby-node">&quot;You head #{offset_to_dir(x, y, z, :long)}.&quot;</span>
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-value str">'You cannot move there.'</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">target_z</span> = <span class="ruby-identifier">mover</span>[<span class="ruby-value str">'z'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">z</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">valid_location?</span>(<span class="ruby-identifier">mover</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-identifier">mover</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-identifier">target_z</span>)
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'users'</span>,<span class="ruby-identifier">user_id</span>,{<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">target_z</span>})
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">target_z</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'You head outside.'</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'You head inside.'</span>
+        <span class="ruby-keyword kw">else</span> <span class="ruby-value str">'You move to floor '</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">target_z</span>.<span class="ruby-identifier">to_s</span> 
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-value str">'You cannot move there.'</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

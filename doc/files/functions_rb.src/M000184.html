@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>describe_animals (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1010</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">describe_animals</span>(<span class="ruby-identifier">amount</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">length</span>=<span class="ruby-identifier">:short</span>)
+<span class="ruby-comment cmt"># example (short) output = '3 wolves' / 'wolf'</span>
+<span class="ruby-comment cmt"># example (long) output = 'three wolves' / 'a wolf'</span>
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">amount</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">''</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> 
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:animal</span>,<span class="ruby-identifier">type</span>,<span class="ruby-identifier">:name</span>)
+      <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">a_an</span>(<span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:animal</span>,<span class="ruby-identifier">type</span>,<span class="ruby-identifier">:name</span>))
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:short</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">+</span> 
+        <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:animal</span>,<span class="ruby-identifier">type</span>,<span class="ruby-identifier">:plural</span>)
+      <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">describe_number</span>(<span class="ruby-identifier">amount</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:animal</span>,<span class="ruby-identifier">type</span>,<span class="ruby-identifier">:plural</span>)
+      <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

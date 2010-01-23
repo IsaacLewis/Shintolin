@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_row (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2439</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_row</span>(<span class="ruby-identifier">table</span>, <span class="ruby-identifier">where_clause</span>, <span class="ruby-identifier">not_clause</span>=<span class="ruby-keyword kw">nil</span>)
+  <span class="ruby-identifier">query</span> = <span class="ruby-node">&quot;SELECT * FROM `#{table}`&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-identifier">mysql_where</span>(<span class="ruby-identifier">where_clause</span>, <span class="ruby-identifier">not_clause</span>)
+  <span class="ruby-identifier">result</span> = <span class="ruby-identifier">$mysql</span>.<span class="ruby-identifier">query</span>(<span class="ruby-identifier">query</span>)
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">num_rows</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">fetch_hash</span>
+    <span class="ruby-keyword kw">else</span> <span class="ruby-comment cmt"># puts 'Warning: More than one row returned.'</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

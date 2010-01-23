@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>give (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1346</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">give</span>(<span class="ruby-identifier">giver</span>, <span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">amount</span>, <span class="ruby-identifier">item_id</span>)
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">receiver</span>.<span class="ruby-identifier">exists?</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">giver</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">receiver</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'ERROR: Invalid user.'</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">same_location?</span>(<span class="ruby-identifier">giver</span>, <span class="ruby-identifier">receiver</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{receiver.name} is not in the vicinity.&quot;</span> <span class="ruby-keyword kw">end</span> 
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">receiver</span>.<span class="ruby-identifier">kind_of?</span>(<span class="ruby-constant">Building</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">receiver</span>.<span class="ruby-identifier">item_storage?</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You cannot leave items in #{receiver.name}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">amt_given</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">giver</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">amount</span>.<span class="ruby-identifier">to_i</span>)
+        
+  <span class="ruby-identifier">items_desc</span> = <span class="ruby-identifier">describe_items</span>(<span class="ruby-identifier">amt_given</span>,<span class="ruby-identifier">item_id</span>,<span class="ruby-identifier">:long</span>)
+
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">receiver</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-identifier">amt_given</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">receiver</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Building</span>
+    <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'persistent'</span>, 
+      <span class="ruby-node">&quot;$ACTOR gave #{items_desc} to the stockpile&quot;</span>, <span class="ruby-identifier">giver</span>.<span class="ruby-identifier">mysql_id</span>)
+  <span class="ruby-keyword kw">else</span> 
+    <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'action'</span>, 
+      <span class="ruby-node">&quot;$ACTOR gave #{items_desc} to $TARGET&quot;</span>, <span class="ruby-identifier">giver</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">receiver</span>.<span class="ruby-identifier">mysql_id</span>) <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">giver</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-node">&quot;You give #{items_desc} to #{receiver.name}.&quot;</span>  
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>describe_building (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1041</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">describe_building</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">building_id</span>=<span class="ruby-keyword kw">nil</span>)
+  <span class="ruby-identifier">building</span> = <span class="ruby-constant">Building</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building_id</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">building_id</span> = <span class="ruby-identifier">building</span>.<span class="ruby-identifier">building_id</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building_id</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">building_id</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">desc</span> =
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+    <span class="ruby-node">&quot;There is #{a_an(db_field(:building, building_id, :name))} here&quot;</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-node">&quot;You are inside #{a_an(db_field(:building, building_id, :name))}&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building_id</span> <span class="ruby-operator">==</span> <span class="ruby-value">3</span> <span class="ruby-comment cmt"># 3 -&gt; stockpile</span>
+    <span class="ruby-identifier">desc</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">', containing &lt;span class=&quot;small&quot;&gt;'</span>
+    <span class="ruby-identifier">contents</span>, <span class="ruby-identifier">_</span> = <span class="ruby-identifier">html_inventory</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-value str">&quot; &quot;</span>, <span class="ruby-identifier">:commas</span>, <span class="ruby-identifier">:inline</span>)
+    <span class="ruby-identifier">desc</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">contents</span> <span class="ruby-operator">+</span> <span class="ruby-value str">'&lt;/span&gt;'</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">desc</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'.'</span>
+  <span class="ruby-identifier">writing</span> = <span class="ruby-identifier">building</span>.<span class="ruby-identifier">writing</span>(<span class="ruby-identifier">z</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">writing</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">z</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">desc</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; Written on #{building.name} are the words &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot;&lt;i&gt;\&quot;#{writing}\&quot;&lt;/i&gt;&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">desc</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot; Written on the wall are the words &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot;&lt;i&gt;\&quot;#{writing}\&quot;&lt;/i&gt;&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">desc</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

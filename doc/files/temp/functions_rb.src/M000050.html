@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>harvest (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1407</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">harvest</span>(<span class="ruby-identifier">user</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">season</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">:Autumn</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You must wait until Autumn before the crops can be harvested.'</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:agriculture</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You have not yet discovered the secrets of agriculture.'</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>] <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;91&quot;</span> <span class="ruby-comment cmt"># 91 = wheat field</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'There is nothing to harvest here.'</span> <span class="ruby-keyword kw">end</span>
+  
+  <span class="ruby-keyword kw">if</span> (<span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:hand_axe</span>) <span class="ruby-operator">&amp;&amp;</span> 
+      <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:stone_axe</span>) <span class="ruby-operator">&amp;&amp;</span>
+      <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">:stone_sickle</span>))
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You need an sickle or an axe to harvest crops.'</span> <span class="ruby-keyword kw">end</span>
+  
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">harvest_ap</span>(<span class="ruby-identifier">user</span>))
+  <span class="ruby-identifier">harvest_size</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">mysql_bounded_update</span>(<span class="ruby-value str">'grid'</span>, <span class="ruby-value str">'building_hp'</span>,
+    {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>}, <span class="ruby-value">-10</span>, <span class="ruby-value">0</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>)[<span class="ruby-value str">'building_hp'</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;0&quot;</span>
+    <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>, {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>}, {<span class="ruby-value str">'terrain'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">9</span>}) <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user</span>, <span class="ruby-value">21</span>, <span class="ruby-operator">+</span><span class="ruby-identifier">harvest_size</span>) <span class="ruby-comment cmt"># 21 - wheat</span>
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'persistent'</span>, 
+    <span class="ruby-node">&quot;$ACTOR harvested #{harvest_size} measures of wheat from the field&quot;</span>, <span class="ruby-identifier">user</span>)
+ <span class="ruby-node">&quot;You harvest #{harvest_size} measures of wheat from the field.&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

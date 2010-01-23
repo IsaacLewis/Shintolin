@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>attack_response (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 659</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">attack_response</span>(<span class="ruby-identifier">target</span>, <span class="ruby-identifier">attacker</span>)
+  <span class="ruby-identifier">msg</span> = <span class="ruby-value str">''</span>
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;Animal&quot;</span>
+      <span class="ruby-identifier">response</span> = <span class="ruby-identifier">random_select</span>(<span class="ruby-identifier">target</span>.<span class="ruby-identifier">when_attacked</span>, <span class="ruby-value">100</span>)
+      <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">response</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:attack</span>
+          <span class="ruby-identifier">dmg</span> = <span class="ruby-identifier">target</span>.<span class="ruby-identifier">attack_dmg</span>
+          <span class="ruby-identifier">kill</span> = <span class="ruby-identifier">deal_damage</span>(<span class="ruby-identifier">dmg</span>, <span class="ruby-identifier">attacker</span>)
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">kill</span>
+            <span class="ruby-identifier">mysql_change_stat</span>(<span class="ruby-identifier">attacker</span>, <span class="ruby-value str">'deaths'</span>, <span class="ruby-value">+1</span>)
+            <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;#{target.name.capitalize} #{target.hit_msg}, &quot;</span> <span class="ruby-operator">+</span>
+            <span class="ruby-value str">&quot;knocking $ACTOR out!&quot;</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;#{target.name.capitalize} #{target.hit_msg}, &quot;</span> <span class="ruby-operator">+</span>
+            <span class="ruby-node">&quot;for #{dmg} hp damage.&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:flee</span>
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">move_animal</span>(<span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql</span>) 
+            <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;#{target.name.capitalize} flees the area.&quot;</span>
+          <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;User&quot;</span>
+      <span class="ruby-identifier">msg</span> = <span class="ruby-value str">&quot;$TARGET flinched.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">msg</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

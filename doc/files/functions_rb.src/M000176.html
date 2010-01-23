@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>chop_tree (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 879</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">chop_tree</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">user</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">user</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-identifier">user</span>[<span class="ruby-value str">'y'</span>])
+  <span class="ruby-identifier">tile_actions</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>], <span class="ruby-identifier">:actions</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile_actions</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">||</span> <span class="ruby-operator">!</span><span class="ruby-identifier">tile_actions</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">:chop_tree</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'There are no trees here.'</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>,<span class="ruby-identifier">:hand_axe</span>) <span class="ruby-operator">&amp;&amp;</span> 
+     <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">:stone_axe</span>) 
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You need an axe to chop down trees.'</span>  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">chop_tree_ap</span>(<span class="ruby-identifier">user_id</span>))
+  <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">:wander</span>, <span class="ruby-value">2</span>, <span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-value">15</span>, <span class="ruby-value">+1</span>) <span class="ruby-comment cmt"># 15 -&gt; log</span>
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'persistent'</span>, <span class="ruby-value str">&quot;$ACTOR chopped down a tree&quot;</span>, <span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">msg</span> = <span class="ruby-value str">'You chop down a tree, taking the heavy log.'</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rand</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span><span class="ruby-value">.2</span>
+    <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">' The tree cover in this area has been reduced.'</span>
+    <span class="ruby-identifier">new_terrain</span> = 
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>]
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;6&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value">2</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;2&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value">7</span>
+      <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;7&quot;</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'hp'</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;0&quot;</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value">8</span> <span class="ruby-keyword kw">else</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>, {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>], <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]}, 
+      {<span class="ruby-value str">'terrain'</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">new_terrain</span>})
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">msg</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>craft (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 919</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">craft</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-identifier">product</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item_id</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craftable</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'That item cannot be crafted.'</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">craft_skill</span> = <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craft_skill</span>]
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">craft_skill</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">craft_skill</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You do not have the required skills to craft that.'</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craft_building</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">building</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>(<span class="ruby-identifier">:obj</span>).<span class="ruby-identifier">building_id</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craft_building</span>], <span class="ruby-identifier">:id</span>) <span class="ruby-operator">!=</span> <span class="ruby-identifier">building</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You must be in the vicinity of &quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-node">&quot;#{a_an(db_field(:building, product[:craft_building], :name))} to &quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-node">&quot;craft #{a_an(product[:name])}.&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:tools</span>])
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You need &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">describe_items_list</span>(<span class="ruby-identifier">product</span>[<span class="ruby-identifier">:tools</span>], <span class="ruby-value str">'long'</span>) <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot; to build #{a_an(product[:name])}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:materials</span>])
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;You need &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">describe_items_list</span>(<span class="ruby-identifier">product</span>[<span class="ruby-identifier">:materials</span>], <span class="ruby-value str">'long'</span>) <span class="ruby-operator">+</span>
+      <span class="ruby-node">&quot; to build #{a_an(product[:name])}.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">xp_type</span> = <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craft_xp_type</span>]
+  <span class="ruby-identifier">xp_type</span> = <span class="ruby-identifier">:craft</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">xp_type</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-identifier">xp_amt</span> = <span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craft_xp</span>]
+  <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">xp_type</span>, <span class="ruby-identifier">xp_amt</span>, <span class="ruby-identifier">user</span>)
+
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">product</span>[<span class="ruby-identifier">:craft_ap</span>])
+  <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-value">+1</span>)
+  <span class="ruby-node">&quot;You craft #{a_an(product[:name])}.&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

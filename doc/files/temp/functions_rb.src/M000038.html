@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>describe_occupants (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1223</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">describe_occupants</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">z</span>, <span class="ruby-identifier">omit</span>=<span class="ruby-value">0</span>)
+  <span class="ruby-identifier">occupants</span> = <span class="ruby-identifier">mysql_select</span>(<span class="ruby-value str">'users'</span>,
+    {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">z</span>,<span class="ruby-value str">'active'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">1</span>},{<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">omit</span>})
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">occupants</span>.<span class="ruby-identifier">num_rows</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-value str">''</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">show_hp</span> = <span class="ruby-keyword kw">true</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">omit</span>, <span class="ruby-identifier">:triage</span>)
+  <span class="ruby-identifier">occupant_links</span> = []
+  <span class="ruby-identifier">occupants</span>.<span class="ruby-identifier">each_hash</span> <span class="ruby-keyword kw">do</span>
+    <span class="ruby-operator">|</span><span class="ruby-identifier">occupant</span><span class="ruby-operator">|</span> 
+    <span class="ruby-identifier">occupant_links</span> <span class="ruby-operator">&lt;&lt;</span> 
+      <span class="ruby-identifier">html_userlink</span>(<span class="ruby-identifier">occupant</span>[<span class="ruby-value str">'id'</span>],<span class="ruby-identifier">occupant</span>[<span class="ruby-value str">'name'</span>], <span class="ruby-identifier">:details</span>, <span class="ruby-identifier">show_hp</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">occupants</span>.<span class="ruby-identifier">num_rows</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">desc</span> = <span class="ruby-value str">'Standing here is '</span>
+  <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">desc</span> = <span class="ruby-value str">'Standing here are '</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">desc</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">describe_list</span>(<span class="ruby-identifier">occupant_links</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">'.'</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

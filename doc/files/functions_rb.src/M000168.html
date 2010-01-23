@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>build_list (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 740</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">build_list</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">player</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>])
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_id'</span>] <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;0&quot;</span>
+    <span class="ruby-identifier">tile_building</span> = <span class="ruby-identifier">id_to_key</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_id'</span>])
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">tile_building</span> = <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">buildings</span> = <span class="ruby-identifier">all_where</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">:prereq</span>, <span class="ruby-identifier">tile_building</span>)
+  <span class="ruby-identifier">buildings</span>.<span class="ruby-identifier">delete_if</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">building</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_skill</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span>
+      <span class="ruby-operator">!</span><span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_skill</span>])}
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>describe_number (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1190</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">describe_number</span>(<span class="ruby-identifier">n</span>)
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">n</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'no'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">1</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'one'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">2</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'two'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">3</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'three'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">4</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'four'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">5</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'five'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">6</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'six'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">7</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'seven'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">8</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'eight'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">9</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'nine'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">10</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'ten'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">11</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'eleven'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">12</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'twelve'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">13</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'thirteen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">14</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'fourteen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">15</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'fifteen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">16</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'sixteen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">17</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'seventeen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">18</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'eighteen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">19</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'nineteen'</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">20</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'twenty'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">21</span><span class="ruby-operator">..</span><span class="ruby-value">29</span>) <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'twenty-'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">describe_number</span>(<span class="ruby-identifier">n</span> <span class="ruby-operator">-</span> <span class="ruby-value">20</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">30</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'thirty'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">31</span><span class="ruby-operator">..</span><span class="ruby-value">39</span>) <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'thirty-'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">describe_number</span>(<span class="ruby-identifier">n</span> <span class="ruby-operator">-</span> <span class="ruby-value">30</span>)
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value">40</span> <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'forty'</span>
+    <span class="ruby-keyword kw">when</span> (<span class="ruby-value">41</span><span class="ruby-operator">..</span><span class="ruby-value">49</span>) <span class="ruby-keyword kw">then</span> <span class="ruby-value str">'forty-'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">describe_number</span>(<span class="ruby-identifier">n</span> <span class="ruby-operator">-</span> <span class="ruby-value">40</span>)
+    <span class="ruby-keyword kw">else</span> <span class="ruby-value str">'loads of'</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

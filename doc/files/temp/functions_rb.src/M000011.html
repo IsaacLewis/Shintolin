@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>build (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 688</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">build</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">building_id</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>)
+  <span class="ruby-identifier">tile_obj</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>(<span class="ruby-identifier">:obj</span>)
+  <span class="ruby-identifier">building</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">building_id</span>)
+
+  <span class="ruby-identifier">can_build</span>, <span class="ruby-identifier">msg</span> = <span class="ruby-identifier">can_build?</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">building</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">can_build</span> <span class="ruby-keyword kw">then</span> <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">msg</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">update_hash</span> = {}
+  <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:special</span>]
+  <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:settlement</span>
+    <span class="ruby-identifier">can_settle</span>, <span class="ruby-identifier">can_settle_msg</span> = <span class="ruby-identifier">can_settle?</span>(<span class="ruby-identifier">tile_obj</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">can_settle</span>
+      <span class="ruby-identifier">$header</span>[<span class="ruby-value str">'Location'</span>]= <span class="ruby-value str">'settle.cgi'</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'...should be automatically redirected to settle.cgi...'</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">can_settle_msg</span> <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-identifier">:terrain</span>
+      <span class="ruby-identifier">terrain_id</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:terrain_type</span>], <span class="ruby-identifier">:id</span>)
+      <span class="ruby-identifier">update_hash</span>[<span class="ruby-value str">'terrain'</span>] = <span class="ruby-identifier">terrain_id</span>
+      <span class="ruby-identifier">update_hash</span>[<span class="ruby-value str">'hp'</span>] = <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_hp</span>]
+
+    <span class="ruby-keyword kw">when</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">update_hash</span>[<span class="ruby-value str">'building_id'</span>] = <span class="ruby-identifier">building_id</span>
+      <span class="ruby-identifier">update_hash</span>[<span class="ruby-value str">'building_hp'</span>] = 
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_hp</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+        <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_hp</span>]
+      <span class="ruby-keyword kw">else</span> 
+        <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:max_hp</span>]
+      <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]},<span class="ruby-identifier">update_hash</span>)
+
+  <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:materials</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span>
+    <span class="ruby-operator">|</span><span class="ruby-identifier">item</span>, <span class="ruby-identifier">amt</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">mysql_change_inv</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">item</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">amt</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">update_hash</span> = {}
+
+  <span class="ruby-identifier">xp_type</span> = <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_xp_type</span>]
+  <span class="ruby-identifier">xp_type</span> = <span class="ruby-identifier">:craft</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">xp_type</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-identifier">xp_amt</span> = <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_xp</span>]
+  <span class="ruby-identifier">mysql_give_xp</span>(<span class="ruby-identifier">xp_type</span>, <span class="ruby-identifier">xp_amt</span>, <span class="ruby-identifier">user</span>)
+
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">user</span>, <span class="ruby-operator">-</span><span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_ap</span>])
+
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-value str">'persistent'</span>, 
+    <span class="ruby-node">&quot;$ACTOR built #{a_an(building[:name])} here&quot;</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">mysql_id</span>)
+  <span class="ruby-identifier">building</span>[<span class="ruby-identifier">:build_msg</span>]
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

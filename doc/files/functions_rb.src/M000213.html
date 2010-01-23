@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_location_box (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1651</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_location_box</span>(<span class="ruby-identifier">user</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-constant">Tile</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user</span>.<span class="ruby-identifier">x</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">y</span>)
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">'&lt;div class=&quot;locationbox&quot;&gt;'</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement</span>.<span class="ruby-identifier">link</span> <span class="ruby-operator">+</span> <span class="ruby-value str">', '</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">begin</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:region</span>, <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">region_id</span>, <span class="ruby-identifier">:name</span>)
+  <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'The Wilderness'</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">' - '</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-identifier">season</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-value str">'&lt;/div&gt;'</span>
+  <span class="ruby-identifier">html</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

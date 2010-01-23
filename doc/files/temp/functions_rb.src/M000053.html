@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_action_form (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1477</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-identifier">action</span>, <span class="ruby-identifier">inline</span>=<span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">ap</span>=<span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">post</span>=<span class="ruby-value str">'game.cgi'</span>)
+  <span class="ruby-identifier">html</span> = <span class="ruby-node">&quot;\n&lt;form action=\&quot;#{post}\&quot; method=\&quot;post\&quot; &quot;</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'style=&quot;display:inline&quot; '</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">inline</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;&gt;\n\t&lt;input type=\&quot;submit\&quot; value=\&quot;&quot;</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-identifier">action</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;: #{ap}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ap</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\&quot; /&gt;\n&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'action'</span>, <span class="ruby-identifier">action</span>.<span class="ruby-identifier">downcase</span>)
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-keyword kw">yield</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\n&lt;/form&gt;\n&quot;</span>
+  <span class="ruby-identifier">html</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

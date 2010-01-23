@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_tile (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2450</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>})
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">tile</span> = {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'terrain'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'3'</span>,<span class="ruby-value str">'region'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'3'</span>, <span class="ruby-value str">'building_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'0'</span>}
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">tile</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

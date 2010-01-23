@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>insert_names (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2003</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">insert_names</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">actor_id</span>, <span class="ruby-identifier">target_id</span>, <span class="ruby-identifier">user_id</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">link</span>=<span class="ruby-keyword kw">true</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">str</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">0</span>,<span class="ruby-value">6</span>) <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;$ACTOR&quot;</span>
+    <span class="ruby-comment cmt"># capitalise 'you' at start of msg</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">sub</span>(<span class="ruby-regexp re">/\$ACTOR/</span>,<span class="ruby-identifier">you_or_him</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">actor_id</span>, <span class="ruby-value str">'You'</span>, <span class="ruby-identifier">link</span>)) 
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-comment cmt"># capitalise 'you' after '. '</span>
+  <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(
+    <span class="ruby-regexp re">/(\. *)\$ACTOR/</span>,
+    <span class="ruby-value str">'\1'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">you_or_him</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">actor_id</span>, <span class="ruby-value str">'You'</span>, <span class="ruby-identifier">link</span>))
+  <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\$ACTOR/</span>,<span class="ruby-identifier">you_or_him</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">actor_id</span>, <span class="ruby-value str">'you'</span>, <span class="ruby-identifier">link</span>))
+
+  <span class="ruby-comment cmt"># if target_id is an integer, replace $target with user of that id</span>
+  <span class="ruby-comment cmt"># otherwise, replace $target with target_id </span>
+  <span class="ruby-comment cmt"># (so we can pass, eg, &quot;the deer&quot; as a target)</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target_id</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(
+      <span class="ruby-regexp re">/(\. *)\$TARGET/</span>,
+      <span class="ruby-value str">'\1'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">you_or_him</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">target_id</span>, <span class="ruby-value str">'You'</span>, <span class="ruby-identifier">link</span>))
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target_id</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;0&quot;</span>
+      <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\$TARGET/</span>,<span class="ruby-identifier">you_or_him</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">target_id</span>, <span class="ruby-value str">'you'</span>, <span class="ruby-identifier">link</span>))
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/(\. *)\$TARGET/</span>, <span class="ruby-value str">'\1'</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">target_id</span>)
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\$TARGET/</span>, <span class="ruby-identifier">target_id</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">str</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

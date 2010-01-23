@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_map (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1668</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_map</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">range</span>, <span class="ruby-identifier">z</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">buttons</span>=<span class="ruby-keyword kw">false</span>)
+<span class="ruby-comment cmt"># generate html to display a map centered on x, y, and all tiles within</span>
+<span class="ruby-comment cmt"># 'range' of centre tile. Eg range = 2, map size = 5x5.</span>
+<span class="ruby-comment cmt"># If buttons is true, map will include move buttons.</span>
+<span class="ruby-comment cmt"># z determines which buttons are shown, according to tile_dir</span>
+<span class="ruby-comment cmt"># (eg, can't move N/NW/etc if inside)</span>
+
+  <span class="ruby-identifier">html</span> = (<span class="ruby-operator">-</span><span class="ruby-identifier">range</span><span class="ruby-operator">..</span><span class="ruby-identifier">range</span>).<span class="ruby-identifier">map</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">y_offset</span><span class="ruby-operator">|</span> <span class="ruby-value str">&quot;\n\t&lt;tr&gt;\n&quot;</span> <span class="ruby-operator">+</span> (<span class="ruby-operator">-</span><span class="ruby-identifier">range</span><span class="ruby-operator">..</span><span class="ruby-identifier">range</span>).<span class="ruby-identifier">map</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">x_offset</span><span class="ruby-operator">|</span>
+        <span class="ruby-value str">&quot;\t\t&quot;</span> <span class="ruby-operator">+</span> 
+        <span class="ruby-identifier">html_tile</span>((<span class="ruby-identifier">x</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x_offset</span>), (<span class="ruby-identifier">y</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y_offset</span>), <span class="ruby-identifier">z</span>, <span class="ruby-identifier">x_offset</span>, <span class="ruby-identifier">y_offset</span>, <span class="ruby-identifier">buttons</span>)
+      }.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n\t&lt;/tr&gt;\n&quot;</span>
+    }.<span class="ruby-identifier">to_s</span>
+  <span class="ruby-value str">&quot;\n&lt;table&gt;&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">html</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&lt;/table&gt;\n&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

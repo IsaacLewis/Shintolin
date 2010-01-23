@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>mysql_change_stockpile (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2283</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">mysql_change_stockpile</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-identifier">change</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">item_id</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Symbol</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">item_id</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:item</span>, <span class="ruby-identifier">item_id</span>, <span class="ruby-identifier">:id</span>) <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">current_amount</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'stockpiles'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'item_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">item_id</span>})
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">current_amount</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">current_amount</span> = <span class="ruby-identifier">current_amount</span>[<span class="ruby-value str">'amount'</span>].<span class="ruby-identifier">to_i</span>
+    <span class="ruby-identifier">new_amount</span> = <span class="ruby-identifier">current_amount</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">change</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">new_amount</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-comment cmt"># if the change would set that item below 0, set that item to 0</span>
+    <span class="ruby-comment cmt"># and return the actual amount changed</span>
+      <span class="ruby-identifier">change</span> = <span class="ruby-operator">-</span><span class="ruby-identifier">current_amount</span>
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'stockpiles'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'item_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">item_id</span>},{<span class="ruby-value str">'amount'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>})
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'stockpiles'</span>,
+        {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'item_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">item_id</span>},{<span class="ruby-value str">'amount'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">new_amount</span>})
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">change</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'stockpiles'</span>,
+        {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'item_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">item_id</span>,<span class="ruby-value str">'amount'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">change</span>})
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-comment cmt"># if trying to reduce items the stockpile doesn't have, </span>
+      <span class="ruby-comment cmt"># do nothing and return 0</span>
+      <span class="ruby-identifier">change</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">change</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

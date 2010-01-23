@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load_grid (importdb.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File importdb.rb, line 57</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_grid</span>
+  <span class="ruby-identifier">buildings</span> = <span class="ruby-identifier">db_table</span>(<span class="ruby-identifier">:building</span>).<span class="ruby-identifier">values</span>
+  <span class="ruby-identifier">regions</span> = <span class="ruby-identifier">db_table</span>(<span class="ruby-identifier">:region</span>).<span class="ruby-identifier">values</span>
+  <span class="ruby-identifier">old_map</span> = <span class="ruby-identifier">$old_db</span>.<span class="ruby-identifier">query</span>(<span class="ruby-value str">&quot;SELECT * FROM grid&quot;</span>)
+  <span class="ruby-identifier">old_map</span>.<span class="ruby-identifier">each_hash</span>{
+    <span class="ruby-operator">|</span><span class="ruby-identifier">tile</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building'</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+      <span class="ruby-identifier">bid</span> = <span class="ruby-identifier">row_where</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">:name</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building'</span>])[<span class="ruby-identifier">:id</span>]
+      <span class="ruby-comment cmt"># print &quot;Building: #{tile['building']}, id: #{bid}&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">bid</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'region'</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'region'</span>] <span class="ruby-operator">!=</span> <span class="ruby-value str">''</span>
+      <span class="ruby-identifier">print</span> <span class="ruby-node">&quot;Region: #{tile['region']},&quot;</span> 
+      <span class="ruby-identifier">rid</span> = <span class="ruby-identifier">row_where</span>(<span class="ruby-identifier">:region</span>, <span class="ruby-identifier">:name</span>, <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'region'</span>].<span class="ruby-identifier">cap_words</span>)[<span class="ruby-identifier">:id</span>]
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot; id: #{rid}&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">rid</span> = <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">update_hash</span> = 
+    {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'X'</span>], <span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'Y'</span>],<span class="ruby-value str">'building_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">bid</span>,<span class="ruby-value str">'region_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">rid</span>,
+    <span class="ruby-value str">'hp'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'hp'</span>], <span class="ruby-value str">'building_hp'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'bhp'</span>], <span class="ruby-value str">'terrain'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'terrain'</span>]}
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'grid'</span>,<span class="ruby-identifier">update_hash</span>)
+  }
+  <span class="ruby-value str">'Done'</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

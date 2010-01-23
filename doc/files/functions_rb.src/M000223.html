@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_skill (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1841</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_skill</span>(<span class="ruby-identifier">skill_name</span>, <span class="ruby-identifier">user_id</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">indent</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">xp</span>=<span class="ruby-value">0</span>, <span class="ruby-identifier">form</span>=<span class="ruby-value str">'buy'</span>)
+  <span class="ruby-comment cmt"># &lt;b style='color:#777777'&gt;Butchering&lt;/b&gt; - </span>
+  <span class="ruby-comment cmt"># &lt;i&gt;obtain more meat when killing animals &lt;/i&gt;&lt;br&gt;</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">skill_name</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Integer</span> 
+    <span class="ruby-identifier">skill_name</span> = <span class="ruby-identifier">id_to_key</span>(<span class="ruby-identifier">:skill</span>,<span class="ruby-identifier">skill_name</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">skill</span> = (<span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:skill</span>, <span class="ruby-identifier">skill_name</span>))
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:id</span>]) <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">style</span> = <span class="ruby-value str">'bought'</span>
+  <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">style</span> = <span class="ruby-value str">'unbought'</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">'&lt;div style=&quot;padding:8px&quot;&gt;'</span>
+  <span class="ruby-identifier">indent</span>.<span class="ruby-identifier">times</span> {<span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">'&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp'</span>}
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;&lt;b class=\&quot;#{style}\&quot;&gt;&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:name</span>].<span class="ruby-identifier">capitalize</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot;&lt;/b&gt; - &lt;i&gt;#{skill[:desc]}&lt;/i&gt;&quot;</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">form</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'buy'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">can_buy_skill?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:id</span>])
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Buy'</span>, <span class="ruby-keyword kw">true</span>, <span class="ruby-node">&quot;#{xp}xp&quot;</span>, <span class="ruby-value str">'skills.cgi'</span>) { 
+      <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'skill'</span>, <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:id</span>]) }
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">form</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'sell'</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">can_sell_skill?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:id</span>])
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Sell'</span>, <span class="ruby-keyword kw">true</span>, <span class="ruby-keyword kw">nil</span>, <span class="ruby-value str">'skills.cgi'</span>) { 
+      <span class="ruby-identifier">html_hidden</span>(<span class="ruby-value str">'skill'</span>, <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:id</span>]) }
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;&lt;/div&gt;\n&quot;</span>
+  <span class="ruby-identifier">subskills</span> = <span class="ruby-identifier">all_where</span>(<span class="ruby-identifier">:skill</span>, <span class="ruby-identifier">:prereq</span>, <span class="ruby-identifier">skill_name</span>) 
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">subskills</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">subskills</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> 
+      <span class="ruby-operator">|</span><span class="ruby-identifier">sub</span><span class="ruby-operator">|</span> 
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_skill</span>(<span class="ruby-identifier">sub</span>[<span class="ruby-identifier">:id</span>], <span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">indent</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>, <span class="ruby-identifier">xp</span>, <span class="ruby-identifier">form</span>)
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">html</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>say (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 2645</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">say</span>(<span class="ruby-identifier">speaker</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">volume</span>, <span class="ruby-identifier">target</span>=<span class="ruby-keyword kw">nil</span>)
+  <span class="ruby-comment cmt"># check for '\me'</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">message</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-value">0</span>,<span class="ruby-value">3</span>) <span class="ruby-operator">==</span> <span class="ruby-value str">'\\me'</span>
+    <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\\me/</span>,<span class="ruby-value str">'$ACTOR'</span>)
+    <span class="ruby-identifier">message</span> = <span class="ruby-identifier">message</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/\\you/</span>,<span class="ruby-value str">'$TARGET'</span>)
+    <span class="ruby-identifier">volume</span> = <span class="ruby-value str">'slash_me'</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">volume</span>.<span class="ruby-identifier">downcase!</span>
+
+  <span class="ruby-comment cmt"># if there's a target, check they're nearby</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">exists?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">same_location?</span>(<span class="ruby-identifier">speaker</span>, <span class="ruby-identifier">target</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{target['name']} is not in the vicinity.&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">speaker</span>, <span class="ruby-value">-1</span>)
+  <span class="ruby-identifier">mysql_put_message</span>(<span class="ruby-identifier">volume</span>, <span class="ruby-identifier">message</span>, <span class="ruby-identifier">speaker</span>, <span class="ruby-identifier">target</span>)
+
+  <span class="ruby-comment cmt"># insert 8 distance messages if shouting</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">volume</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;shout&quot;</span>
+    <span class="ruby-identifier">mysql_change_ap</span>(<span class="ruby-identifier">speaker</span>, <span class="ruby-value">-2</span>)
+    <span class="ruby-identifier">dirs</span> = [<span class="ruby-value str">'NW'</span>,<span class="ruby-value str">'N'</span>,<span class="ruby-value str">'NE'</span>,<span class="ruby-value str">'E'</span>,<span class="ruby-value str">'SE'</span>,<span class="ruby-value str">'S'</span>,<span class="ruby-value str">'SW'</span>,<span class="ruby-value str">'W'</span>]
+    <span class="ruby-identifier">dirs</span>.<span class="ruby-identifier">each</span> {
+      <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>,<span class="ruby-identifier">y</span>,<span class="ruby-identifier">z</span> = <span class="ruby-identifier">dir_to_offset</span>(<span class="ruby-identifier">dir</span>)
+      <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'messages'</span>,
+        {<span class="ruby-value str">'speaker_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">mysql_id</span>,<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">message</span>,<span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'distant'</span>,
+        <span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">x</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>),<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">y</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y</span>),
+        <span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">z</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">z</span>)})
+    }
+  <span class="ruby-keyword kw">end</span>
+  
+  <span class="ruby-comment cmt"># work out display</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">volume</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'slash_me'</span>
+    <span class="ruby-identifier">insert_names</span>(<span class="ruby-identifier">message</span>, <span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">target</span>.<span class="ruby-identifier">mysql_id</span>, <span class="ruby-identifier">speaker</span>.<span class="ruby-identifier">mysql_id</span>)
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">volume</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'talk'</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">volume</span> = <span class="ruby-value str">'say'</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-node">&quot;You #{volume} &lt;i&gt;\&quot;#{message}\&quot;&lt;/i&gt;&quot;</span> <span class="ruby-operator">+</span> 
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">target</span>.<span class="ruby-identifier">exists?</span> <span class="ruby-keyword kw">then</span> <span class="ruby-node">&quot; to #{target.name}.&quot;</span>
+    <span class="ruby-keyword kw">else</span> <span class="ruby-value str">&quot;.&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

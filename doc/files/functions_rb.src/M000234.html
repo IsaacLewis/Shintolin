@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>join (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2062</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">join</span>(<span class="ruby-identifier">user</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>(<span class="ruby-identifier">:obj</span>)
+  <span class="ruby-identifier">building</span> = <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">building</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">building</span>.<span class="ruby-identifier">actions</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:join</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-value str">'You must be at a totem pole to join a settlement.'</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">settlement_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement_id</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;You are already a resident of #{tile.settlement.name}.&quot;</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'accounts'</span>, <span class="ruby-identifier">user</span>.<span class="ruby-identifier">mysql_id</span>, 
+    {<span class="ruby-value str">'settlement_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement_id</span>})
+  <span class="ruby-identifier">msg</span> = <span class="ruby-node">&quot;You pledge allegiance to #{tile.settlement.name}.&quot;</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">settlement_id</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">msg</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot; You are no longer a resident of #{user.settlement.name}.&quot;</span> <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">msg</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

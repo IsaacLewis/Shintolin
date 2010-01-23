@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>ap_cost (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 549</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ap_cost</span>(<span class="ruby-identifier">dest_terrain</span>, <span class="ruby-identifier">start_terrain</span> = <span class="ruby-keyword kw">nil</span>, <span class="ruby-identifier">user_id</span> = <span class="ruby-keyword kw">nil</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">start_terrain</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-identifier">altitude_mod</span> = <span class="ruby-identifier">altitude_mod</span>(<span class="ruby-identifier">dest_terrain</span>, <span class="ruby-identifier">start_terrain</span>, <span class="ruby-identifier">user_id</span>)
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">altitude_mod</span> = <span class="ruby-value">0</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">ap_data</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:terrain</span>, <span class="ruby-identifier">dest_terrain</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">:ap</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">ap_data</span>.<span class="ruby-identifier">kind_of?</span> <span class="ruby-constant">Numeric</span>
+    <span class="ruby-identifier">ap_data</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">altitude_mod</span>
+  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">user_id</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+  <span class="ruby-comment cmt"># ap cost depends on skill, but we have no user_id, so return default cost</span>
+    <span class="ruby-identifier">ap_data</span>[<span class="ruby-identifier">:default</span>] <span class="ruby-operator">+</span> <span class="ruby-identifier">altitude_mod</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-comment cmt"># find lowest ap cost that user has skill for</span>
+    <span class="ruby-identifier">ap_data</span>.<span class="ruby-identifier">delete_if</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">skill</span>, <span class="ruby-identifier">ap_cost</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">has_skill?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">skill</span>)}
+    <span class="ruby-identifier">costs</span> = <span class="ruby-identifier">ap_data</span>.<span class="ruby-identifier">values</span>
+    <span class="ruby-identifier">costs</span>.<span class="ruby-identifier">min</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

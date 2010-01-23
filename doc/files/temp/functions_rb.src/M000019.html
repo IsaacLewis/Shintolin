@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>can_settle? (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 862</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">can_settle?</span>(<span class="ruby-identifier">tile</span>)
+
+  <span class="ruby-identifier">totems</span> = <span class="ruby-identifier">buildings_in_radius</span>(<span class="ruby-identifier">tile</span>, <span class="ruby-value">400</span>, <span class="ruby-identifier">:totem</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">totems</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-node">&quot;There #{is_are(totems)} already #{totems} settlements near here; &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot;there must be no other totem poles within a 20-tile radius &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot;to build a new totem.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">huts</span> = <span class="ruby-identifier">buildings_in_radius</span>(<span class="ruby-identifier">tile</span>, <span class="ruby-value">5</span>, <span class="ruby-identifier">:hut</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">huts</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">3</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>, <span class="ruby-node">&quot;There #{is_are(totems)} only #{huts} huts near here; &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot;there must be at least three huts within your field of &quot;</span> <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot;view (excluding corners) to build a new totem pole.&quot;</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span>, <span class="ruby-value str">&quot;This looks like a fine spot to build a settlement. &quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-value str">&quot;Please choose a name for your new community.&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,7 @@
+Options +ExecCGI
+DirectoryIndex index.cgi
+ErrorDocument 404 /notfound.html
+AddHandler cgi-script cgi pl
+RewriteEngine On
+RewriteRule ^.*php$ index.cgi
+Redirect 301 /isaac.html http://www.dcs.warwick.ac.uk/~csuhdo/

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>load_animals (importdb.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File importdb.rb, line 113</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load_animals</span>
+  <span class="ruby-identifier">old_animals</span> = <span class="ruby-identifier">$old_db</span>.<span class="ruby-identifier">query</span>(<span class="ruby-value str">'SELECT * FROM animals'</span>)
+  <span class="ruby-identifier">old_animals</span>.<span class="ruby-identifier">each_hash</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">type_id</span> = <span class="ruby-identifier">row_where</span>(<span class="ruby-identifier">:animal</span>, <span class="ruby-identifier">:name</span>, <span class="ruby-identifier">row</span>[<span class="ruby-value str">'type'</span>])[<span class="ruby-identifier">:id</span>]
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Animal: #{row['type']} ID: #{type_id}&quot;</span>
+    <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'animals'</span>,{<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'ID'</span>],<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'X'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'Y'</span>],<span class="ruby-value str">'hp'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">row</span>[<span class="ruby-value str">'hp'</span>],<span class="ruby-value str">'type_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">type_id</span>})
+  }
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

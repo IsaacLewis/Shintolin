@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>move_animal (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2146</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">move_animal</span>(<span class="ruby-identifier">animal</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">animal</span>[<span class="ruby-value str">'x'</span>], <span class="ruby-identifier">animal</span>[<span class="ruby-value str">'y'</span>])
+  <span class="ruby-identifier">animal_data</span> = <span class="ruby-identifier">db_row</span>(<span class="ruby-identifier">:animal</span>, <span class="ruby-identifier">animal</span>[<span class="ruby-value str">'type_id'</span>])
+
+  <span class="ruby-identifier">habitats</span> = <span class="ruby-identifier">habitats</span>(<span class="ruby-identifier">animal</span>[<span class="ruby-value str">'type_id'</span>])
+  <span class="ruby-value">8</span>.<span class="ruby-identifier">times</span> {
+    <span class="ruby-identifier">dir</span> = <span class="ruby-identifier">random_dir</span>
+    <span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span> = <span class="ruby-identifier">dir_to_offset</span>(<span class="ruby-identifier">dir</span>)
+    <span class="ruby-identifier">dest_tile</span> = <span class="ruby-identifier">mysql_tile</span>(<span class="ruby-identifier">animal</span>[<span class="ruby-value str">'x'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>, <span class="ruby-identifier">animal</span>[<span class="ruby-value str">'y'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">habitats</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">dest_tile</span>[<span class="ruby-value str">'terrain'</span>].<span class="ruby-identifier">to_i</span>)
+      <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'animals'</span>, <span class="ruby-identifier">animal</span>[<span class="ruby-value str">'id'</span>], 
+        {<span class="ruby-value str">'x'</span> =<span class="ruby-operator">&gt;</span> (<span class="ruby-identifier">animal</span>[<span class="ruby-value str">'x'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>), <span class="ruby-value str">'y'</span> =<span class="ruby-operator">&gt;</span> (<span class="ruby-identifier">animal</span>[<span class="ruby-value str">'y'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y</span>)})
+      <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">end</span>
+  }
+  <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">false</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

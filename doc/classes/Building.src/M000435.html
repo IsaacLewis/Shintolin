@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>writing (Building)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 211</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">writing</span>(<span class="ruby-identifier">z</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">special</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">:settlement</span>
+      <span class="ruby-identifier">settlement</span> = <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement</span>
+      <span class="ruby-keyword kw">return</span> <span class="ruby-node">&quot;#{settlement.name}, population #{settlement.population}. &quot;</span> <span class="ruby-operator">+</span>
+        <span class="ruby-node">&quot;#{settlement.motto}&quot;</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">writing</span> = <span class="ruby-identifier">mysql_row</span>(<span class="ruby-value str">'writings'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">x</span>,<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">y</span>,<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">z</span>})
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">writing</span> <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">writing</span>[<span class="ruby-value str">'message'</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">''</span>
+    <span class="ruby-identifier">writing</span>[<span class="ruby-value str">'message'</span>]
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

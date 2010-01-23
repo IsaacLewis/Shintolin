@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>hours_mins_to_daytick (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1984</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">hours_mins_to_daytick</span>
+<span class="ruby-comment cmt"># unfinished!</span>
+  <span class="ruby-identifier">unix_t</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">seconds_in_day</span> = (<span class="ruby-value">3600</span> <span class="ruby-operator">*</span> <span class="ruby-value">24</span>)
+  <span class="ruby-identifier">secs_past_midnight</span> = <span class="ruby-identifier">unix_t</span> <span class="ruby-operator">-</span> ((<span class="ruby-identifier">unix_t</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">seconds_in_day</span>) <span class="ruby-operator">*</span> <span class="ruby-identifier">day_secs</span>)
+  <span class="ruby-identifier">hours_to_daytick</span> = ((<span class="ruby-identifier">seconds_in_day</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">secs_past_midnight</span>) <span class="ruby-operator">/</span> <span class="ruby-value">3600</span>)
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_forms (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1489</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_forms</span>(<span class="ruby-identifier">user_id</span>)
+<span class="ruby-comment cmt"># generate the buttons that should be visible to player(user_id)</span>
+  <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">tile</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">tile</span>(<span class="ruby-identifier">:obj</span>)
+  <span class="ruby-identifier">player</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">forms</span> = <span class="ruby-identifier">user_forms</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">''</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:attack</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Attack'</span>) {
+      <span class="ruby-identifier">html_select_user</span>(
+        {<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'z'</span>]},
+        {<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user_id</span>}, <span class="ruby-value str">'No-one'</span>, <span class="ruby-identifier">:animals</span>, <span class="ruby-identifier">:buildings</span>) <span class="ruby-operator">+</span> 
+      <span class="ruby-value str">' with '</span> <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">html_select_item</span>(<span class="ruby-identifier">:weapon</span>, <span class="ruby-identifier">user_id</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> 
+        (<span class="ruby-identifier">item</span>[<span class="ruby-identifier">:use</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">:weapon</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:id</span>])) <span class="ruby-operator">||</span> 
+          <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:id</span>] <span class="ruby-operator">==</span> <span class="ruby-value">24</span> <span class="ruby-comment cmt"># 24 -&gt; fist</span>
+      }
+    }
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:use</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Use'</span>) { 
+      <span class="ruby-identifier">html_select_item</span> { 
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> 
+        <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:use</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:use</span>] <span class="ruby-operator">!=</span> <span class="ruby-identifier">:weapon</span> <span class="ruby-operator">&amp;&amp;</span> 
+        <span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:id</span>])
+      } <span class="ruby-operator">+</span> 
+      <span class="ruby-value str">' on '</span> <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">html_select_user</span>({<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'z'</span>]}, 
+        {<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user_id</span>}, <span class="ruby-value str">'Self'</span>)}
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:build</span>
+    <span class="ruby-identifier">buildables</span> = <span class="ruby-identifier">build_list</span>(<span class="ruby-identifier">user_id</span>)
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Build'</span>) {
+      <span class="ruby-identifier">html_select_building</span>(<span class="ruby-identifier">user_id</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">building</span><span class="ruby-operator">|</span> <span class="ruby-identifier">buildables</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">building</span>}}
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:craft</span>
+    <span class="ruby-identifier">craftables</span> = <span class="ruby-identifier">craft_list</span>(<span class="ruby-identifier">user_id</span>)
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Craft'</span>) {
+      <span class="ruby-identifier">html_select_item</span>(<span class="ruby-identifier">:craft</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">craftables</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">item</span>}}
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:give</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Give'</span>) { 
+      <span class="ruby-identifier">html_select_num</span>(<span class="ruby-value">10</span>) <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">html_select_item</span>(<span class="ruby-identifier">:plural</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:id</span>])} <span class="ruby-operator">+</span> 
+      <span class="ruby-value str">' to '</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">html_select_user</span>({<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'z'</span>]},
+        {<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user_id</span>}, <span class="ruby-value str">'No-one'</span>, <span class="ruby-keyword kw">false</span>, <span class="ruby-identifier">:buildings</span>)}
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:take</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Take'</span>) {
+      <span class="ruby-identifier">html_select_num</span>(<span class="ruby-value">5</span>) <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">html_select_item</span>(<span class="ruby-identifier">:plural</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">stockpile_has_item?</span>(<span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-identifier">item</span>[<span class="ruby-identifier">:id</span>])} <span class="ruby-operator">+</span>
+      <span class="ruby-value str">&quot; from the stockpile.&quot;</span>} 
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:drop</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Drop'</span>) { 
+      <span class="ruby-identifier">html_select_num</span>(<span class="ruby-value">10</span>) <span class="ruby-operator">+</span> 
+      <span class="ruby-identifier">html_select_item</span>(<span class="ruby-identifier">:plural</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">user_has_item?</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:id</span>])}}
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:speak</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Say'</span>) {
+      <span class="ruby-identifier">html_text_box</span>(<span class="ruby-value">200</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">' to '</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">html_select_user</span>({<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">player</span>[<span class="ruby-value str">'z'</span>]},
+        {<span class="ruby-value str">'id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">user_id</span>}, <span class="ruby-value str">'Everyone'</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">'&lt;br&gt;Volume: '</span> <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">html_select</span>([<span class="ruby-value str">'Talk'</span>,<span class="ruby-value str">'Whisper'</span>,<span class="ruby-value str">'Shout'</span>])}
+     
+  <span class="ruby-keyword kw">end</span>  
+
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:write</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Write'</span>) {
+      <span class="ruby-identifier">html_text_box</span>(<span class="ruby-value">200</span>) <span class="ruby-operator">+</span> <span class="ruby-value str">' on the building'</span>}
+     
+  <span class="ruby-keyword kw">end</span>
+  
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:sow</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Sow'</span>) {
+      <span class="ruby-identifier">html_select_item</span>(<span class="ruby-identifier">:plural</span>) {
+        <span class="ruby-operator">|</span><span class="ruby-identifier">item</span><span class="ruby-operator">|</span> <span class="ruby-identifier">item</span>[<span class="ruby-identifier">:plantable</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">true</span>}}
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Search'</span>, <span class="ruby-identifier">:inline</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:search</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:chop_tree</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Chop Tree'</span>, <span class="ruby-identifier">:inline</span>, <span class="ruby-node">&quot;#{chop_tree_ap(user_id)}ap&quot;</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:harvest</span>
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Harvest'</span>, <span class="ruby-identifier">:inline</span>, <span class="ruby-node">&quot;#{harvest_ap(user_id)}ap&quot;</span>)
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Add Fuel'</span>, <span class="ruby-identifier">:inline</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:add_fuel</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:join</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">settlement_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">settlement_id</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Leave Settlement'</span>, <span class="ruby-identifier">:inline</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Join Settlement'</span>, <span class="ruby-identifier">:inline</span>) <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">msg_no_ap</span>(<span class="ruby-identifier">user_id</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">forms</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">:no_ap</span>
+  <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_action_form</span>(<span class="ruby-value str">'Refresh'</span>,<span class="ruby-identifier">:inline</span>)
+  <span class="ruby-identifier">html</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

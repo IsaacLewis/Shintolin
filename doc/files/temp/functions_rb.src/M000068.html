@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_skills_list (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 1881</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_skills_list</span>(<span class="ruby-identifier">type</span>, <span class="ruby-identifier">user_id</span>=<span class="ruby-value">0</span>)
+  <span class="ruby-identifier">skills</span> = <span class="ruby-identifier">all_where</span>(<span class="ruby-identifier">:skill</span>, <span class="ruby-identifier">:type</span>, <span class="ruby-identifier">type</span>)
+  <span class="ruby-identifier">skills</span>.<span class="ruby-identifier">delete_if</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">skill</span><span class="ruby-operator">|</span> <span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:prereq</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>}
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">''</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user_id</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span>
+    <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user_id</span>)
+    <span class="ruby-identifier">level</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">level</span>(<span class="ruby-identifier">type</span>)
+    <span class="ruby-identifier">xp_field</span> = <span class="ruby-identifier">xp_field</span>(<span class="ruby-identifier">type</span>)
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-node">&quot;\n&lt;h2&gt;Level #{level} #{type.to_s.capitalize}&lt;/h2&gt;&quot;</span> <span class="ruby-operator">+</span>
+    <span class="ruby-node">&quot;\nYou have #{user.mysql[xp_field]} #{type} experience points.&lt;br&gt;\n&quot;</span>
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">level</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Max_Level</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">form</span> = <span class="ruby-value str">'buy'</span>
+  <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">form</span> = <span class="ruby-value str">'sell'</span>
+  <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">skills</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> 
+    <span class="ruby-operator">|</span><span class="ruby-identifier">skill</span><span class="ruby-operator">|</span> 
+    <span class="ruby-identifier">html</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">html_skill</span>(<span class="ruby-identifier">skill</span>[<span class="ruby-identifier">:id</span>], <span class="ruby-identifier">user_id</span>, <span class="ruby-value">0</span>, <span class="ruby-identifier">skill_cost</span>(<span class="ruby-identifier">level</span>), <span class="ruby-identifier">form</span>)
+  <span class="ruby-keyword kw">end</span>
+ 
+  <span class="ruby-identifier">html</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

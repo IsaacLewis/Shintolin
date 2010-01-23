@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>tick_campfires (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 2889</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tick_campfires</span>
+  <span class="ruby-identifier">campfire_tiles</span> = <span class="ruby-identifier">mysql_select</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'building_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">5</span>})
+  <span class="ruby-identifier">campfire_tiles</span>.<span class="ruby-identifier">each_hash</span> {
+    <span class="ruby-operator">|</span><span class="ruby-identifier">tile</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">2</span>) <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;hp #{tile['building_hp']}&quot;</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_hp'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">1</span>
+        <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]},
+          {<span class="ruby-value str">'building_id'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>,<span class="ruby-value str">'building_hp'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value">0</span>})
+        <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'messages'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'0'</span>,
+          <span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'game'</span>,<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'The campfire burned away to nothing'</span>})
+
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-identifier">mysql_update</span>(<span class="ruby-value str">'grid'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>]},
+          {<span class="ruby-value str">'building_hp'</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_hp'</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>)})
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">tile</span>[<span class="ruby-value str">'building_hp'</span>] <span class="ruby-operator">==</span> <span class="ruby-value str">'5'</span>
+          <span class="ruby-identifier">mysql_insert</span>(<span class="ruby-value str">'messages'</span>,{<span class="ruby-value str">'x'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'x'</span>],<span class="ruby-value str">'y'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-identifier">tile</span>[<span class="ruby-value str">'y'</span>],<span class="ruby-value str">'z'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'0'</span>,
+          <span class="ruby-value str">'type'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'game'</span>,<span class="ruby-value str">'message'</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">'The campfire began to get low'</span>})  
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  }
+  <span class="ruby-value str">'Campfires burned!'</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

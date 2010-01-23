@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>html_player_data (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 1721</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">html_player_data</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">player</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">user_id</span>)
+  <span class="ruby-identifier">html</span> = <span class="ruby-value str">'You are '</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-identifier">html_userlink</span>(<span class="ruby-identifier">user_id</span>,<span class="ruby-identifier">player</span>[<span class="ruby-value str">'name'</span>])  <span class="ruby-operator">+</span> <span class="ruby-value str">'.'</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-node">&quot; HP: &lt;b&gt;#{player['hp']}/#{player['maxhp']}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-node">&quot; AP: &lt;b&gt;#{player['ap'].to_i.ceil}/#{Max_AP}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-node">&quot; &lt;span style=\&quot;font-size:80%\&quot;&gt;(#{ap_recovery(user_id)} AP/hour)&lt;/span&gt;&quot;</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-node">&quot; Hunger: &lt;b&gt;#{player['hunger']}/#{Max_Hunger}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-node">&quot;\n&lt;br&gt;\nLevel: &lt;b&gt;#{user.level}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span> 
+  <span class="ruby-node">&quot;&amp;nbsp;&amp;nbsp;&lt;b&gt;XP:&lt;/b&gt; Wanderer: &lt;b&gt;#{player['wander_xp']}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot; Herbalist: &lt;b&gt;#{player['herbal_xp']}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot; Crafter: &lt;b&gt;#{player['craft_xp']}&lt;/b&gt;&quot;</span> <span class="ruby-operator">+</span>
+  <span class="ruby-node">&quot; Warrior: &lt;b&gt;#{player['warrior_xp']}&lt;/b&gt;&quot;</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

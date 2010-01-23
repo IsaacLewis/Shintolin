@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>you_or_him (temp/functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File temp/functions.rb, line 3315</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">you_or_him</span>(<span class="ruby-identifier">you_id</span>, <span class="ruby-identifier">him_id</span>, <span class="ruby-identifier">you</span>=<span class="ruby-value str">'you'</span>, <span class="ruby-identifier">link</span>=<span class="ruby-keyword kw">true</span>)
+  <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">you_id</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">him_id</span>.<span class="ruby-identifier">to_i</span>
+    <span class="ruby-node">&quot;&lt;b&gt;#{you}&lt;/b&gt;&quot;</span>
+  <span class="ruby-keyword kw">else</span>
+    <span class="ruby-identifier">him</span> = <span class="ruby-identifier">mysql_user</span>(<span class="ruby-identifier">him_id</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">link</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">:no_link</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">html_userlink</span>(<span class="ruby-identifier">him_id</span>, <span class="ruby-identifier">him</span>[<span class="ruby-value str">'name'</span>])
+    <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">him</span>[<span class="ruby-value str">'name'</span>]
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

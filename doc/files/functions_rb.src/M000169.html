@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>buildings_in_radius (functions.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File functions.rb, line 754</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">buildings_in_radius</span>(<span class="ruby-identifier">tile</span>, <span class="ruby-identifier">radius_squared</span>, <span class="ruby-identifier">building</span>)
+  <span class="ruby-identifier">center_x</span>, <span class="ruby-identifier">center_y</span> = <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">x</span>, <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">y</span>
+  <span class="ruby-identifier">radius</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">sqrt</span>(<span class="ruby-identifier">radius_squared</span>).<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">tiles</span> = []
+  (<span class="ruby-operator">-</span><span class="ruby-identifier">radius</span><span class="ruby-operator">..</span><span class="ruby-identifier">radius</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span>
+    <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> (<span class="ruby-operator">-</span><span class="ruby-identifier">radius</span><span class="ruby-operator">..</span><span class="ruby-identifier">radius</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-operator">|</span><span class="ruby-identifier">y</span><span class="ruby-operator">|</span>
+      <span class="ruby-comment cmt"># ensure location is in circle using pythag</span>
+      <span class="ruby-keyword kw">if</span> ((<span class="ruby-identifier">x</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">x</span>) <span class="ruby-operator">+</span> (<span class="ruby-identifier">y</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">y</span>)) <span class="ruby-operator">&lt;=</span> <span class="ruby-identifier">radius_squared</span>
+        <span class="ruby-identifier">tiles</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Tile</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">center_x</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">x</span>, <span class="ruby-identifier">center_y</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">y</span>) <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">end</span>
+  
+  <span class="ruby-identifier">building_id</span> = <span class="ruby-identifier">db_field</span>(<span class="ruby-identifier">:building</span>, <span class="ruby-identifier">building</span>, <span class="ruby-identifier">:id</span>)
+  <span class="ruby-identifier">tiles</span> = <span class="ruby-identifier">tiles</span>.<span class="ruby-identifier">find_all</span> <span class="ruby-keyword kw">do</span>
+    <span class="ruby-operator">|</span><span class="ruby-identifier">tile</span><span class="ruby-operator">|</span> <span class="ruby-identifier">tile</span>.<span class="ruby-identifier">building_id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">building_id</span> <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-identifier">tiles</span>.<span class="ruby-identifier">count</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
